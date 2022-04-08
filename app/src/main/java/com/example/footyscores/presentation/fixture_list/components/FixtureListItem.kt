@@ -2,6 +2,7 @@ package com.example.footyscores.presentation.fixture_list.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -14,37 +15,88 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.example.footyscores.data.remote.dto.ResponseDto
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.footyscores.R
+import com.example.footyscores.common.Constants.EXTRA_TIME
+import com.example.footyscores.common.Constants.FIRST_HALF
+import com.example.footyscores.common.Constants.FULL_TIME
+import com.example.footyscores.common.Constants.HALF_TIME
+import com.example.footyscores.common.Constants.LIVE
+import com.example.footyscores.common.Constants.NOT_START
+import com.example.footyscores.common.Constants.SECOND_HALF
+import com.example.footyscores.common.getTimeFromDateString
+import com.example.footyscores.domain.model.fixturebydate.Response
+import com.example.footyscores.presentation.ui.theme.Orange
+import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
+import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.imageloading.ImageLoadState
 
 @ExperimentalCoilApi
 @Composable
-fun FixtureListItem(fixture: ResponseDto = ResponseDto()) {
+fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .background(Color.DarkGray.copy(0.3f), RoundedCornerShape(10.dp))
-            .padding(8.dp),
+            .padding(bottom = 8.dp, end = 8.dp, start = 8.dp)
+            .background(Color.DarkGray.copy(0.3f), RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val matchStatusShort = matchInfo.fixture.status.short
+        val matchStatusDisplayText = when (matchStatusShort) {
+            NOT_START -> matchInfo.fixture.date.let { getTimeFromDateString(it) }
+            FULL_TIME -> "FT"
+            HALF_TIME -> "HT"
+            else -> matchInfo.fixture.status.elapsed.toString() + "`"
+        }
+        val matchStatusDisplayColor = when (matchStatusShort) {
+            NOT_START -> Color.White
+            FULL_TIME -> Color.White
+            else -> Orange
+        }
+        val matchStatusFontWeight = when (matchStatusShort) {
+            NOT_START -> FontWeight.Normal
+            FULL_TIME -> FontWeight.Normal
+            HALF_TIME -> FontWeight.Bold
+            else -> FontWeight.Bold
+        }
+        val modifierAlpha = when (matchStatusShort) {
+            NOT_START -> Modifier.alpha(0.7f)
+            FULL_TIME -> Modifier.alpha(0.7f)
+            HALF_TIME -> Modifier.alpha(1f)
+            else -> Modifier.alpha(1f)
+        }
+
+        val matchOngoing =
+            matchStatusShort == LIVE || matchStatusShort == HALF_TIME || matchStatusShort == FIRST_HALF || matchStatusShort == SECOND_HALF || matchStatusShort == EXTRA_TIME
+        if (matchOngoing) {
+            Box(
+                modifier = Modifier
+                    .width(8.dp)
+                    .background(Orange, RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp))
+                    .padding(end = 12.dp)
+            )
+        } else {
+            Spacer(modifier = Modifier.width(20.dp))
+        }
+
         Text(
-            text = if (fixture.fixture.status.short == "NS")
-                getTimeFromTimeStamp(fixture.fixture.timestamp.toLong())
-            else fixture.fixture.status.elapsed.toString(),
-            color = Color.White,
+            text = matchStatusDisplayText,
+            color = matchStatusDisplayColor,
             fontSize = 11.sp,
-            modifier = Modifier.alpha(0.7f)
+            fontWeight = matchStatusFontWeight,
+            modifier = modifierAlpha.width(30.dp),
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.width(12.dp))
+
         Column(
             verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier
                 .weight(1f)
@@ -52,22 +104,35 @@ fun FixtureListItem(fixture: ResponseDto = ResponseDto()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = rememberImagePainter(fixture.teams.home.logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
+                val coilPainter = rememberCoilPainter(
+                    request = matchInfo.teams.home.logo,
                 )
+                when (coilPainter.loadState) {
+                    is ImageLoadState.Success -> Image(
+                        painter = coilPainter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                    )
+                    else -> Icon(
+                        painter = rememberImagePainter(data = R.drawable.ic_default_sport_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp),
+                        tint = WhiteAlphaColor
+                    )
+                }
+
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = fixture.teams.home.name,
+                    text = matchInfo.teams.home.name!!,
                     style = MaterialTheme.typography.body1.copy(fontSize = 12.sp),
                     modifier = Modifier.weight(1f)
                 )
 
-                if (fixture.fixture.status.short != "NS") {
+                if (matchStatusShort != NOT_START) {
                     Text(
-                        text = fixture.goals.home.toString(),
+                        text = matchInfo.goals.home.toString(),
                         style = MaterialTheme.typography.body1.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
@@ -81,22 +146,35 @@ fun FixtureListItem(fixture: ResponseDto = ResponseDto()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = rememberImagePainter(fixture.teams.away.logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 12.dp)
-                        .size(24.dp)
+                val coilPainter = rememberCoilPainter(
+                    request = matchInfo.teams.away.logo,
                 )
+                when (coilPainter.loadState) {
+                    is ImageLoadState.Success -> Image(
+                        painter = coilPainter,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp)
+                    )
+                    else -> Icon(
+                        painter = rememberImagePainter(data = R.drawable.ic_default_sport_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(20.dp),
+                        tint = WhiteAlphaColor
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = fixture.teams.away.name,
+                    text = matchInfo.teams.away.name!!,
                     style = MaterialTheme.typography.body1.copy(fontSize = 12.sp),
                     modifier = Modifier.weight(1f)
                 )
 
-                if (fixture.fixture.status.short != "NS") {
+                if (matchStatusShort != NOT_START) {
                     Text(
-                        text = fixture.goals.away.toString(),
+                        text = matchInfo.goals.away.toString(),
                         style = MaterialTheme.typography.body1.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
@@ -111,25 +189,3 @@ fun FixtureListItem(fixture: ResponseDto = ResponseDto()) {
     }
 }
 
-fun getTimeFromTimeStamp(timestamp: Long): String {
-    val timeFormatter = SimpleDateFormat("hh:mm", Locale.getDefault())
-    return timeFormatter.format(Date(timestamp))
-}
-
-@ExperimentalCoilApi
-@Composable
-fun ListHeader() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Image(painter = rememberImagePainter(""), contentDescription = null)
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = "", style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold))
-            Text(text = "", style = TextStyle(fontSize = 12.sp), modifier = Modifier.alpha(0.7f))
-
-        }
-    }
-}

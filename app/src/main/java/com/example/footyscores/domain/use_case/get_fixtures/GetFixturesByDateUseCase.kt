@@ -2,8 +2,8 @@ package com.example.footyscores.domain.use_case.get_fixtures
 
 import android.util.Log
 import com.example.footyscores.common.Resource
-import com.example.footyscores.data.remote.dto.ResponseDto
-import com.example.footyscores.domain.repository.FootyScoresRepo
+import com.example.footyscores.domain.model.fixturebydate.Response
+import com.example.footyscores.domain.repository.FixturesRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -11,20 +11,19 @@ import java.io.IOException
 import javax.inject.Inject
 
 class GetFixturesByDateUseCase @Inject constructor(
-    private val footyScoresRepo: FootyScoresRepo
+    private val fixturesRepo: FixturesRepo
 ) {
-    operator fun invoke(date: String): Flow<Resource<List<ResponseDto>>> = flow {
+    operator fun invoke(date: String): Flow<Resource<List<Response>>> = flow {
+        Log.d("TAG", "invoke: GET FIXTURE BY DATE CALL MADE")
         try {
             emit(Resource.Loading())
 
-            val fixturesByDate = footyScoresRepo.getFixturesByDate(date).response
-//            Log.d("TAG", "invoke: FIXTURES BY DATE: $fixturesByDate")
+            val fixturesByDate =
+                fixturesRepo.getFixturesByDate(date).response.map { it.toDomainModelResponse() }
             emit(Resource.Success(fixturesByDate))
         } catch (e: HttpException) {
-//            Log.d("TAG", "invoke: FIXTURES BY DATE ERROR: ${e.localizedMessage}")
             emit(Resource.Error(e.localizedMessage ?: "An unknown error occurred"))
         } catch (e: IOException) {
-//            Log.d("TAG", "invoke: FIXTURES BY DATE ERROR: ${e.localizedMessage}")
             emit(Resource.Error("Could not reach server. Please check your internet connection"))
         }
     }

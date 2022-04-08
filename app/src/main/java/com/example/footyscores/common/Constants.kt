@@ -3,5 +3,37 @@ package com.example.footyscores.common
 object Constants {
     const val BASE_URL = "https://api-football-v1.p.rapidapi.com/v3/"
     const val RAPID_API_HOST = "api-football-v1.p.rapidapi.com"
-    const val API_KEY = "0db4120ec0msh9d705e8cd3e7d97p149f96jsnc2d7320e0965"
+    const val NOT_START = "NS"
+    const val FULL_TIME = "FT"
+    const val HALF_TIME = "HT"
+    const val LIVE = "LIVE"
+    const val FIRST_HALF = "1H"
+    const val SECOND_HALF = "2H"
+    const val EXTRA_TIME = "ET"
+    val COUNTRIES = listOf("England", "Spain", "Germany", "France", "Italy", "Belgium")
+    val INTERESTED_LEAGUE_IDS = listOf(
+        39,
+        40,
+        140,
+        141,
+        135,
+        547,
+        78,
+        79,
+        61,
+        62,
+        4,
+        15,
+        2,
+        45,
+        48,
+        528,
+        547,
+        3,
+        6,
+        9,
+        137,
+        556,
+        143
+    )// ids gotten from api response
 }

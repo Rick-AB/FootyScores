@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -20,11 +22,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.footyscores.presentation.fixture_list.FixtureListScreen
+import androidx.navigation.navArgument
+import coil.annotation.ExperimentalCoilApi
+import com.example.footyscores.presentation.fixture_details.FixtureDetailsFragment
 import com.example.footyscores.presentation.fixture_list.TabScreens
 import com.example.footyscores.presentation.ui.theme.FootyScoresTheme
 import com.example.footyscores.presentation.ui.theme.Orange
@@ -41,25 +46,30 @@ class MainActivity : ComponentActivity() {
         setContent {
             FootyScoresTheme {
                 val navController = rememberNavController()
-                val items = listOf(
+                val bottomBarItems = listOf(
                     BottomNavItem("Scores", "fixture_list_screen", Icons.Default.SportsSoccer),
                     BottomNavItem("Favorite", "favorites_screen", Icons.Default.StarBorder),
                     BottomNavItem("Settings", "settings_screen", Icons.Default.Settings),
                 )
                 Scaffold(bottomBar = {
-                    BottomNavigationBar(
-                        items = items,
-                        navController = navController,
-                        onItemClick = { navController.navigate(it.route) }
-                    )
-                }) {
-                    Screens(navController)
+                    val currentRoute =
+                        navController.currentBackStackEntryAsState().value?.destination?.route
+                    if (bottomBarItems.map { it.route }.contains(currentRoute)) {
+                        BottomNavigationBar(
+                            items = bottomBarItems,
+                            navController = navController,
+                            onItemClick = { navController.navigate(it.route) }
+                        )
+                    }
+                }) { padding ->
+                    Box(modifier = Modifier.padding(bottom = padding.calculateBottomPadding() + 10.dp)) {
+                        Screens(navController)
+                    }
                 }
             }
         }
     }
 }
-
 
 @ExperimentalMaterialApi
 @Composable
@@ -104,21 +114,52 @@ fun BottomNavigationBar(
 
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @ExperimentalFoundationApi
 @ExperimentalPagerApi
 @Composable
 fun Screens(
     navController: NavHostController
 ) {
-    NavHost(navController = navController, startDestination = Screens.FixtureListScreen.route) {
-        composable(Screens.FixtureListScreen.route) {
-            TabScreens()
+    NavHost(navController = navController, startDestination = Screens.FixtureListScreen.name) {
+        composable(Screens.FixtureListScreen.name) {
+            TabScreens(navController)
         }
-        composable(Screens.FavoritesScreen.route) {
+        composable(Screens.FavoritesScreen.name) {
 
         }
-        composable(Screens.SettingScreen.route) {
+        composable(Screens.SettingScreen.name) {
 
+        }
+        composable(
+            Screens.FixtureDetailsScreen.name + Screens.FixtureDetailsScreen.arguments,
+            arguments = listOf(
+                navArgument("fixtureId") { type = NavType.IntType },
+                navArgument("homeTeamName") { type = NavType.StringType },
+                navArgument("homeTeamLogo") { type = NavType.StringType },
+                navArgument("awayTeamName") { type = NavType.StringType },
+                navArgument("awayTeamLogo") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("time") { type = NavType.StringType }
+            )
+        ) {
+            val fixtureId = it.arguments?.getInt("fixtureId", 0)
+            val homeTeamName = it.arguments?.getString("homeTeamName", "")
+            val homeTeamLogo = it.arguments?.getString("homeTeamLogo", "")
+            val awayTeamName = it.arguments?.getString("awayTeamName", "")
+            val awayTeamLogo = it.arguments?.getString("awayTeamLogo", "")
+            val date = it.arguments?.getString("date", "")
+            val time = it.arguments?.getString("time", "")
+            FixtureDetailsFragment(
+                navController = navController,
+                fixtureId = fixtureId!!,
+                homeTeamName = homeTeamName!!,
+                homoTeamLogo = homeTeamLogo!!,
+                awayTeamName = awayTeamName!!,
+                awayTeamLogo = awayTeamLogo!!,
+                date = date!!,
+                time = time!!
+            )
         }
     }
 }
@@ -133,6 +174,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     FootyScoresTheme(darkTheme = true) {
-        FixtureListScreen(12345677L)
+//        FixtureListScreen(12345677L, )
     }
 }
