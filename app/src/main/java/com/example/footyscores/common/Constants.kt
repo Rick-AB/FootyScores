@@ -10,6 +10,13 @@ object Constants {
     const val FIRST_HALF = "1H"
     const val SECOND_HALF = "2H"
     const val EXTRA_TIME = "ET"
+    const val GOAL_EVENT = "goal"
+    const val CARD_EVENT = "card"
+    const val YELLOW_CARD_EVENT = "yellow card"
+    const val RED_CARD_EVENT = "red card"
+    const val OWN_GOAL_EVENT = "own goal"
+    const val PENALY_SCORED_EVENT = "penalty"
+    val INTERESTED_EVENTS = listOf("Goal", "Card")
     val COUNTRIES = listOf("England", "Spain", "Germany", "France", "Italy", "Belgium")
     val INTERESTED_LEAGUE_IDS = listOf(
         39,

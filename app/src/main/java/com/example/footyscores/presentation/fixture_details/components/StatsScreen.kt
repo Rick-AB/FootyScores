@@ -1,7 +1,10 @@
 package com.example.footyscores.presentation.fixture_details.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
@@ -11,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -18,64 +23,110 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.footyscores.R
+import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 
 @Composable
-fun StatsScreen() {
+fun StatsScreen(
+    state: FixtureDetailsState,
+    lazyListState: LazyListState,
+    nestedScrollConnection: NestedScrollConnection
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp, start = 8.dp, end = 8.dp)
+            .verticalScroll(rememberScrollState())
+            .nestedScroll(nestedScrollConnection)
     ) {
-        MatchPendingTile(R.string.match_pending_stats)
-        (0..4).forEach { _ ->
-            StatItem("4", "10", "Shots on target")
-            Divider(
-                color = WhiteAlphaColor,
-                thickness = 0.4.dp,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        val statsAvailable = state.fixtureDetails?.statistics?.isNotEmpty()!!
+        if (!statsAvailable) {
+            MatchPendingTile(R.string.match_pending_stats)
+        } else {
+            val homeStatList = state.fixtureDetails.statistics[0].statistics
+            val awayStatList = state.fixtureDetails.statistics[1].statistics
+            homeStatList.forEachIndexed { index, _ ->
+                val nonDigitRegex = Regex("[^0-9.]")
+                var homeStat = homeStatList[index].value
+                if (homeStat != null) {
+                    if (homeStat is String) {
+                        homeStat = homeStat.replace(nonDigitRegex, "")
+                        homeStat =
+                            if (homeStat.contains('.')) homeStat.toDouble().toInt() else homeStat
+                    }
+                    if (homeStat is Double) {
+                        homeStat = homeStat.toInt()
+                    }
+                } else {
+                    homeStat = 0
+                }
+
+                var awayStat = awayStatList[index].value
+                if (awayStat != null) {
+                    if (awayStat is String) {
+                        awayStat = awayStat.replace(nonDigitRegex, "")
+                        awayStat =
+                            if (awayStat.contains('.')) awayStat.toDouble().toInt() else awayStat
+                    }
+                    if (awayStat is Double) {
+                        awayStat = awayStat.toInt()
+                    }
+                } else {
+                    awayStat = 0
+                }
+                val statType = homeStatList[index].type!!
+                StatItem(homeStat.toString().toInt(), awayStat.toString().toInt(), statType)
+                Divider(
+                    color = WhiteAlphaColor,
+                    thickness = 0.4.dp,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(50.dp))
         }
+
     }
 }
 
 @Composable
-fun StatItem(homeStat: String, awayStat: String, statTitle: String) {
+fun StatItem(homeStat: Int, awayStat: Int, statType: String) {
     Column(
         modifier = Modifier
             .padding(bottom = 8.dp)
             .fillMaxWidth()
     ) {
-        val homeStatGreater = homeStat.toInt() > awayStat.toInt()
+        val homeStatGreater = homeStat > awayStat
         val homeProgress = homeStat.toFloat() / (homeStat.toFloat() + awayStat.toFloat())
         val awayProgress = awayStat.toFloat() / (homeStat.toFloat() + awayStat.toFloat())
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .padding(bottom = 4.dp, start = 4.dp, end = 4.dp)
+                .padding(bottom = 8.dp, start = 4.dp, end = 4.dp)
                 .fillMaxWidth()
         ) {
             Text(
-                text = homeStat,
+                text = "$homeStat",
                 style = TextStyle(
                     color = if (homeStatGreater) Color.White else WhiteAlphaColor,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
             Text(
-                text = statTitle, style = TextStyle(
-                    color = if (homeStatGreater) Color.White else WhiteAlphaColor,
-                    fontSize = 12.sp,
+                text = statType, style = TextStyle(
+                    color = WhiteAlphaColor,
+                    fontSize = 10.sp,
                     textAlign = TextAlign.Center
                 )
             )
             Text(
-                text = awayStat, style = TextStyle(
+                text = "$awayStat",
+                style = TextStyle(
                     color = if (!homeStatGreater) Color.White else WhiteAlphaColor,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -90,7 +141,7 @@ fun StatItem(homeStat: String, awayStat: String, statTitle: String) {
             LinearProgressIndicator(
                 progress = (homeProgress),
                 color = if (homeStatGreater) Orange else Color.LightGray,
-                backgroundColor = Color.Black.copy(0.7f),
+                backgroundColor = LightGreyColor,
                 modifier = Modifier
                     .scale(-1f)
                     .weight(1f)
@@ -103,7 +154,7 @@ fun StatItem(homeStat: String, awayStat: String, statTitle: String) {
             LinearProgressIndicator(
                 progress = awayProgress,
                 color = if (!homeStatGreater) Orange else Color.LightGray,
-                backgroundColor = Color.Black.copy(0.7f),
+                backgroundColor = LightGreyColor,
                 modifier = Modifier
                     .weight(1f)
                     .height(8.dp)
@@ -118,5 +169,5 @@ fun StatItem(homeStat: String, awayStat: String, statTitle: String) {
 @Preview
 @Composable
 fun StatsPrev() {
-    StatsScreen()
+//    StatsScreen(FixtureDetailsState(), lazyListState, nestedScrollConnection)
 }

@@ -5,12 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SportsSoccer
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.runtime.Composable
@@ -38,9 +37,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @ExperimentalFoundationApi
-    @ExperimentalPagerApi
-    @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -49,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 val bottomBarItems = listOf(
                     BottomNavItem("Scores", "fixture_list_screen", Icons.Default.SportsSoccer),
                     BottomNavItem("Favorite", "favorites_screen", Icons.Default.StarBorder),
-                    BottomNavItem("Settings", "settings_screen", Icons.Default.Settings),
+                    BottomNavItem("Refresh", "", Icons.Default.Refresh),
                 )
                 Scaffold(bottomBar = {
                     val currentRoute =
@@ -58,13 +54,13 @@ class MainActivity : ComponentActivity() {
                         BottomNavigationBar(
                             items = bottomBarItems,
                             navController = navController,
-                            onItemClick = { navController.navigate(it.route) }
+                            onItemClick = {
+                                navController.navigate(it.route)
+                            }
                         )
                     }
                 }) { padding ->
-                    Box(modifier = Modifier.padding(bottom = padding.calculateBottomPadding() + 10.dp)) {
-                        Screens(navController)
-                    }
+                    Screens(navController, padding)
                 }
             }
         }
@@ -87,12 +83,18 @@ fun BottomNavigationBar(
                 selected = selected,
                 selectedContentColor = Orange,
                 unselectedContentColor = Color.White,
-                onClick = { onItemClick(item) },
+                onClick = {
+                    if (item.route.isEmpty()) {
+                        return@BottomNavigationItem
+                    } else {
+                        onItemClick(item)
+                    }
+                },
                 icon = {
                     Column(horizontalAlignment = CenterHorizontally) {
                         if (item.badgeCount > 0) {
-                            BadgeBox(
-                                badgeContent = {
+                            BadgedBox(
+                                badge = {
                                     Text(text = item.badgeCount.toString())
                                 }
                             ) {
@@ -119,11 +121,12 @@ fun BottomNavigationBar(
 @ExperimentalPagerApi
 @Composable
 fun Screens(
-    navController: NavHostController
+    navController: NavHostController,
+    innerPadding: PaddingValues
 ) {
     NavHost(navController = navController, startDestination = Screens.FixtureListScreen.name) {
         composable(Screens.FixtureListScreen.name) {
-            TabScreens(navController)
+            TabScreens(navController, innerPadding)
         }
         composable(Screens.FavoritesScreen.name) {
 

@@ -50,9 +50,12 @@ fun getTimeFromDateString(dateString: String): String {
     return SimpleDateFormat("HH:mm", Locale.getDefault()).format(date!!)
 }
 
-fun getFormattedDateFromDateString(dateString: String): String {
+fun getFormattedDateFromDateString(dateString: String, excludeYear: Boolean = true): String {
     val datePortion = dateString.split("T")[0]
     val date =
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(datePortion)
-    return SimpleDateFormat("dd MMM", Locale.getDefault()).format(date!!)
+    return if (excludeYear) SimpleDateFormat(
+        "dd MMM",
+        Locale.getDefault()
+    ).format(date!!) else SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date!!)
 }

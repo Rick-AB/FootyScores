@@ -1,15 +1,16 @@
 package com.example.footyscores.presentation.fixture_list.components
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import coil.annotation.ExperimentalCoilApi
 import com.example.footyscores.presentation.Screens
 import com.example.footyscores.presentation.fixture_list.FixtureListState
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -17,15 +18,19 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.net.URLEncoder
 
 @RequiresApi(Build.VERSION_CODES.N)
-@ExperimentalFoundationApi
-@ExperimentalCoilApi
 @Composable
 fun FixtureListScreen(
     navController: NavController,
     state: FixtureListState,
     onRefresh: () -> Unit,
 ) {
-    val fixtures = state.fixtures
+    val fixtures = state.fixtures.sortedBy { it.league.id }
+    val context = LocalContext.current
+    LaunchedEffect(key1 = state.error) {
+        if (!state.error.isNullOrEmpty()) {
+            Toast.makeText(context, state.error, Toast.LENGTH_LONG).show()
+        }
+    }
     SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = state.isRefreshing), onRefresh = {
         onRefresh()
     }) {

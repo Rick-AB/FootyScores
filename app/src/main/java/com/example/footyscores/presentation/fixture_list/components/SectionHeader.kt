@@ -23,8 +23,8 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.decode.SvgDecoder
 import com.example.footyscores.domain.model.fixturebydate.League
+import java.util.*
 
-@ExperimentalCoilApi
 @Composable
 fun SectionHeader(league: League) {
     Row(
@@ -35,9 +35,11 @@ fun SectionHeader(league: League) {
     ) {
         val url = league.flag ?: league.logo
         Image(
-            painter = if (!url?.endsWith("svg")!!) rememberImagePainter(data = url) else rememberImagePainter(data = url, builder = {
-                decoder(SvgDecoder(LocalContext.current))
-            }),
+            painter = if (!url?.endsWith("svg")!!) rememberImagePainter(data = url) else rememberImagePainter(
+                data = url,
+                builder = {
+                    decoder(SvgDecoder(LocalContext.current))
+                }),
             contentDescription = "SVG Image",
             modifier = Modifier
                 .size(30.dp, 12.dp)
@@ -56,13 +58,11 @@ fun SectionHeader(league: League) {
                     )
                 )
             }
-            league.country?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.body2.copy(fontSize = 10.sp),
-                    modifier = Modifier.alpha(0.7f)
-                )
-            }
+            Text(
+                text = if (league.country?.lowercase(Locale.getDefault()) == "world") league.round!! else league.country!!,
+                style = MaterialTheme.typography.body2.copy(fontSize = 10.sp),
+                modifier = Modifier.alpha(0.7f)
+            )
         }
         Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null)
     }

@@ -3,12 +3,13 @@ package com.example.footyscores.data.repository
 import com.example.footyscores.data.remote.ApiFootball
 import com.example.footyscores.data.remote.dto.fixturebydatedto.ResponseBodyDto
 import com.example.footyscores.data.remote.dto.fixturebyiddto.FixtureByIdResponseBodyDto
+import com.example.footyscores.data.remote.dto.leaguestandings.LeagueStandingsResponseBodyDto
 import com.example.footyscores.domain.repository.FixturesRepo
 import javax.inject.Inject
 
 class FixturesRepoImpl @Inject constructor(
     private val apiFootball: ApiFootball
-): FixturesRepo {
+) : FixturesRepo {
 
     override suspend fun getFixturesByDate(date: String): ResponseBodyDto {
         return apiFootball.getFixturesByDate(date)
@@ -16,5 +17,12 @@ class FixturesRepoImpl @Inject constructor(
 
     override suspend fun getFixtureById(id: Int): FixtureByIdResponseBodyDto {
         return apiFootball.getFixtureById(id)
+    }
+
+    override suspend fun getStandingsByLeagueId(
+        season: Int,
+        leagueId: Int
+    ): LeagueStandingsResponseBodyDto {
+        return apiFootball.getStaindingsByLeagueId(season, leagueId)
     }
 }

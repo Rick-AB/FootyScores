@@ -19,7 +19,7 @@ fun FixtureDetailsFragment(
 ) {
     val fixtureDetailsViewModel: FixtureDetailsViewModel = hiltViewModel()
     val state = fixtureDetailsViewModel.state.value
-    LaunchedEffect(key1 = fixtureId) {
+    LaunchedEffect(key1 = Unit) {
         fixtureDetailsViewModel.getFixtureById(fixtureId)
     }
     FixtureDetailsScreen(
@@ -30,6 +30,6 @@ fun FixtureDetailsFragment(
         awayTeamName = awayTeamName,
         awayTeamLogo = awayTeamLogo,
         date = date,
-        time = time
+        fixtureDetailsViewModel::refresh
     )
 }

@@ -1,16 +1,23 @@
 package com.example.footyscores.presentation.fixture_details.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -19,50 +26,113 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import coil.decode.SvgDecoder
 import com.example.footyscores.R
+import com.example.footyscores.common.getFormattedDateFromDateString
+import com.example.footyscores.domain.model.leaguestandings.LeagueStandingsStanding
+import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.flowlayout.FlowRow
+import com.google.accompanist.flowlayout.MainAxisAlignment
+import com.google.accompanist.flowlayout.SizeMode
+import java.util.*
 
 @Composable
-fun InfoScreen() {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 20.dp, start = 8.dp, end = 8.dp)) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 0.4.dp,
-                        color = WhiteAlphaColor,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(all = 12.dp)
-            ) {
-                InfoItem(icon = R.drawable.ic_outline_calendar_month_24, text = "01 Apr 2022")
-                InfoItem(icon = R.drawable.ic_whistle, text = "Mike Dean (England)")
-                InfoItem(icon = R.drawable.ic_stadium, text = "Old Trafford")
-            }
+fun InfoScreen(
+    state: FixtureDetailsState,
+    lazyListState: LazyListState,
+    nestedScrollConnection: NestedScrollConnection
+) {
+    val expandedTable = remember {
+        mutableStateOf(false)
+    }
+    val homeTeamId = state.fixtureDetails?.teams?.home?.id
+    val awayTeamId = state.fixtureDetails?.teams?.away?.id
+    val leagueStandings = state.leagueStandings?.league?.standings?.get(0)!!
+    val currentTeamsStandings = leagueStandings.filter {
+        it.team.id == homeTeamId || it.team.id == awayTeamId
+    }
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = stringResource(id = R.string.table).uppercase(),
-                style = TextStyle(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 20.dp, start = 8.dp, end = 8.dp)
+            .verticalScroll(rememberScrollState())
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        FlowRow(
+            mainAxisAlignment = MainAxisAlignment.Center,
+            mainAxisSize = SizeMode.Expand,
+            crossAxisSpacing = 12.dp,
+            mainAxisSpacing = 12.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 0.4.dp,
                     color = WhiteAlphaColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
+                    shape = RoundedCornerShape(8.dp)
                 )
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Table()
+                .padding(12.dp)
+        ) {
+            val fixtureDate =
+                state.fixtureDetails?.fixture?.date?.let {
+                    getFormattedDateFromDateString(
+                        it,
+                        false
+                    )
+                }
+            val referee = state.fixtureDetails?.fixture?.referee
+            val stadium = state.fixtureDetails?.fixture?.venue?.name
+            fixtureDate?.let {
+                InfoItem(icon = R.drawable.ic_outline_calendar_month_24, text = fixtureDate)
+            }
+            referee?.let {
+                InfoItem(icon = R.drawable.ic_whistle, text = it)
+            }
+            stadium?.let {
+                InfoItem(icon = R.drawable.ic_stadium, text = it)
+            }
         }
+
+        Spacer(modifier = Modifier.height(30.dp))
+        Text(
+            text = stringResource(id = R.string.table).uppercase(),
+            style = TextStyle(
+                color = WhiteAlphaColor,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        val leagueCountry =
+            state.fixtureDetails?.league?.country?.lowercase(Locale.getDefault())
+        if (leagueCountry != "world") {
+            val leagueName = state.fixtureDetails?.league?.name
+            val leagueFlag = state.fixtureDetails?.league?.flag
+            Table(
+                leagueName!!, leagueFlag,
+                leagueCountry!!.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                if (expandedTable.value) leagueStandings else currentTeamsStandings,
+                expandedTable.value
+            ) {
+                expandedTable.value = !expandedTable.value
+            }
+        }
+        Spacer(modifier = Modifier.height(50.dp))
     }
 }
 
 @Composable
-fun Table() {
+fun Table(
+    leagueName: String,
+    leagueFlag: String?,
+    leagueCountry: String,
+    standings: List<LeagueStandingsStanding>,
+    isExpanded: Boolean,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .border(
@@ -70,48 +140,99 @@ fun Table() {
                 color = WhiteAlphaColor,
                 shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 8.dp)
+            .padding()
     ) {
-        Column {
-            TableHeader()
+//        LazyColumn {
+//            item {
+//                TableHeader(leagueName, leagueFlag, leagueCountry)
+//                Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
+//            }
+//            item {
+//                TableKeys()
+//                Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
+//            }
+//            items(standings, key = { it.team.id }) {
+//                TableValue(Modifier.animateItemPlacement(), it)
+//                Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
+//            }
+//            item {
+//                Row(
+//                    horizontalArrangement = Arrangement.Center,
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier
+//                        .clickable { onClick() }
+//                        .fillMaxWidth()
+//                        .padding(vertical = 8.dp)
+//                ) {
+//                    Text(
+//                        text = if (isExpanded) "See Less" else "See All",
+//                        style = TextStyle(
+//                            color = WhiteAlphaColor,
+//                            fontSize = 10.sp,
+//                            textAlign = TextAlign.Center
+//                        )
+//                    )
+//                }
+//            }
+//        }
+        Column(modifier = Modifier.animateContentSize()) {
+            TableHeader(leagueName, leagueFlag, leagueCountry)
             Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
             TableKeys()
             Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
-            TableValue()
-            Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
-            TableValue()
+            standings.forEach {
+                TableValue(modifier = Modifier, it)
+                Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
+            }
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable { onClick() }
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text(
+                    text = if (isExpanded) "See Less" else "See All",
+                    style = TextStyle(
+                        color = WhiteAlphaColor,
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
         }
     }
 }
 
 @Composable
-fun TableValue() {
+fun TableValue(modifier: Modifier, leagueStandingsStanding: LeagueStandingsStanding) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 14.dp)
+            .padding(top = 10.dp, bottom = 10.dp, start = 12.dp, end = 8.dp)
     ) {
         Text(
-            text = "4",
+            text = "${leagueStandingsStanding.rank}",
             style = TextStyle(
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             ),
-            modifier = Modifier.width(24.dp)
+            modifier = Modifier.width(30.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Row(modifier = Modifier.weight(3.5f), verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = rememberCoilPainter(request = ""),
+                painter = rememberCoilPainter(request = leagueStandingsStanding.team.logo),
                 contentDescription = "",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Huddersfield Town",
+                text = leagueStandingsStanding.team.name,
                 style = TextStyle(
                     color = WhiteAlphaColor,
                     fontSize = 10.sp,
@@ -121,7 +242,7 @@ fun TableValue() {
         }
 
         Text(
-            text = "39",
+            text = "${leagueStandingsStanding.all.played}",
             style = TextStyle(
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
@@ -131,20 +252,20 @@ fun TableValue() {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "8",
+            text = "${leagueStandingsStanding.goalsDiff}",
             style = TextStyle(
                 color = WhiteAlphaColor,
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "63",
+            text = "${leagueStandingsStanding.points}",
             style = TextStyle(
                 color = WhiteAlphaColor,
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             ),
@@ -159,7 +280,7 @@ fun TableKeys() {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 14.dp)
+            .padding(top = 12.dp, bottom = 12.dp, start = 12.dp, end = 8.dp)
     ) {
         Text(
             text = "#",
@@ -169,7 +290,7 @@ fun TableKeys() {
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             ),
-            modifier = Modifier.width(24.dp)
+            modifier = Modifier.width(30.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -215,30 +336,34 @@ fun TableKeys() {
 }
 
 @Composable
-fun TableHeader() {
+fun TableHeader(leagueName: String, leagueFlag: String?, leagueCountry: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 14.dp)
+            .padding(top = 14.dp, bottom = 14.dp, start = 12.dp, end = 8.dp)
     ) {
-        val coilPainter = rememberCoilPainter(request = "")
+
         Image(
-            painter = coilPainter,
+            painter = rememberImagePainter(data = leagueFlag, builder = {
+                decoder(SvgDecoder(LocalContext.current))
+            }),
             contentDescription = "League flag",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier
+                .size(30.dp, 12.dp)
+                .clip(RoundedCornerShape(4.dp))
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "ChampionShip",
+                text = leagueName,
                 style = TextStyle(
                     color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
-            Text(text = "England", style = TextStyle(color = WhiteAlphaColor, fontSize = 10.sp))
+            Text(text = leagueCountry, style = TextStyle(color = WhiteAlphaColor, fontSize = 10.sp))
         }
 
     }
@@ -263,5 +388,5 @@ fun InfoItem(icon: Int, text: String) {
 @Preview
 @Composable
 fun InfoPreview() {
-    InfoScreen()
+//    InfoScreen(FixtureDetailsState())
 }

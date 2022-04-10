@@ -1,37 +1,50 @@
 package com.example.footyscores.presentation.fixture_details.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.footyscores.R
+import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
 import com.example.footyscores.presentation.ui.theme.Black
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabItems() {
-    val tabs = listOf(R.string.info, R.string.summary,  R.string.stats, R.string.lineups)
-    val pagerState = rememberPagerState()
+fun TabItems(
+    state: FixtureDetailsState,
+    lazyListState: LazyListState,
+    nestedScrollConnection: NestedScrollConnection
+) {
+    val tabs = remember {
+        mutableStateListOf(R.string.info, R.string.summary, R.string.stats, R.string.lineups)
+    }
+    val pagerState = rememberPagerState(initialPage = 0)
     val tabIndex = pagerState.currentPage
     val coroutineScope = rememberCoroutineScope()
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         TabRow(
             backgroundColor = Color.Transparent,
             selectedTabIndex = tabIndex,
@@ -67,11 +80,11 @@ fun TabItems() {
         }
 
         HorizontalPager(count = tabs.size, state = pagerState, modifier = Modifier.weight(1f)) {
-            when (pagerState.currentPage) {
-                0 -> InfoScreen()
-                1 -> SummaryScreen()
-                2 -> StatsScreen()
-                3 -> LineupsScreen()
+            when (this.currentPage) {
+                0 -> InfoScreen(state, lazyListState, nestedScrollConnection)
+                1 -> SummaryScreen(state, lazyListState, nestedScrollConnection)
+                2 -> StatsScreen(state, lazyListState, nestedScrollConnection)
+                3 -> LineupsScreen(state, lazyListState, nestedScrollConnection)
             }
         }
     }

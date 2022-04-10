@@ -2,9 +2,10 @@ package com.example.footyscores.presentation.fixture_list
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -25,17 +26,13 @@ import com.example.footyscores.common.getDayOfWeek
 import com.example.footyscores.common.getMonthOfYear
 import com.example.footyscores.presentation.fixture_list.components.FixtureListScreen
 import com.example.footyscores.presentation.ui.theme.Orange
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import kotlinx.coroutines.launch
 
-@ExperimentalCoilApi
 @RequiresApi(Build.VERSION_CODES.N)
-@ExperimentalFoundationApi
-@ExperimentalPagerApi
 @Composable
-fun TabScreens(navController: NavController) {
+fun TabScreens(navController: NavController, innerPadding: PaddingValues) {
     val viewModel: FixtureListViewModel = hiltViewModel()
     val pagerState = viewModel.pagerState
     val dateRanges by remember {
@@ -44,7 +41,7 @@ fun TabScreens(navController: NavController) {
     val tabIndex = pagerState.currentPage
     val coroutineScope = rememberCoroutineScope()
 
-    Column {
+    Column(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())) {
         TabRow(selectedTabIndex = tabIndex, indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 modifier = Modifier.pagerTabIndicatorOffset(

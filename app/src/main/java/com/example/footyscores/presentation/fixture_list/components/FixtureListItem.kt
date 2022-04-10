@@ -14,12 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.example.footyscores.R
 import com.example.footyscores.common.Constants.EXTRA_TIME
@@ -31,19 +31,19 @@ import com.example.footyscores.common.Constants.NOT_START
 import com.example.footyscores.common.Constants.SECOND_HALF
 import com.example.footyscores.common.getTimeFromDateString
 import com.example.footyscores.domain.model.fixturebydate.Response
+import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
 
-@ExperimentalCoilApi
 @Composable
 fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp, end = 8.dp, start = 8.dp)
-            .background(Color.DarkGray.copy(0.3f), RoundedCornerShape(8.dp))
+            .background(LightGreyColor, RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -69,7 +69,6 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
         val modifierAlpha = when (matchStatusShort) {
             NOT_START -> Modifier.alpha(0.7f)
             FULL_TIME -> Modifier.alpha(0.7f)
-            HALF_TIME -> Modifier.alpha(1f)
             else -> Modifier.alpha(1f)
         }
 
@@ -78,10 +77,12 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
         if (matchOngoing) {
             Box(
                 modifier = Modifier
-                    .width(8.dp)
-                    .background(Orange, RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp))
-                    .padding(end = 12.dp)
+                    .width(5.dp)
+                    .height(50.dp)
+                    .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
+                    .background(Orange)
             )
+            Spacer(modifier = Modifier.width(15.dp))
         } else {
             Spacer(modifier = Modifier.width(20.dp))
         }
