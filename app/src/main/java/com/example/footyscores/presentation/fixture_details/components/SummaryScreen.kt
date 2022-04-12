@@ -2,7 +2,6 @@ package com.example.footyscores.presentation.fixture_details.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,10 +27,11 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.footyscores.R
 import com.example.footyscores.common.Constants.CARD_EVENT
 import com.example.footyscores.common.Constants.GOAL_EVENT
-import com.example.footyscores.common.Constants.INTERESTED_EVENTS
 import com.example.footyscores.common.Constants.YELLOW_CARD_EVENT
+import com.example.footyscores.common.Constants.eventsOfInterestList
 import com.example.footyscores.domain.model.fixturebyid.FixtureByIdEvent
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 import com.example.footyscores.presentation.ui.theme.Yellow
 import java.util.*
@@ -40,7 +39,6 @@ import java.util.*
 @Composable
 fun SummaryScreen(
     state: FixtureDetailsState,
-    lazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection
 ) {
     Column(
@@ -48,7 +46,6 @@ fun SummaryScreen(
             .padding(top = 8.dp, start = 8.dp, end = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .nestedScroll(nestedScrollConnection)
     ) {
         val homeGoals = remember {
             mutableListOf(0)
@@ -62,7 +59,7 @@ fun SummaryScreen(
         if (events.isEmpty()) {
             MatchPendingTile(R.string.match_pending_summary_text)
         } else {
-            events.filter { INTERESTED_EVENTS.contains(it.type) }.forEachIndexed { index, it ->
+            events.filter { eventsOfInterestList.contains(it.type) }.forEachIndexed { index, it ->
                 if (it.type?.lowercase() == GOAL_EVENT && it.team.id == homeTeamId) {
                     val goalCount = homeGoals[homeGoals.lastIndex].plus(1)
                     homeGoals.add(goalCount)
@@ -113,6 +110,7 @@ fun MatchEventItem(
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.constrainAs(eventTimeText) {
                 start.linkTo(parent.start)
@@ -127,7 +125,8 @@ fun MatchEventItem(
                 style = TextStyle(
                     color = Color.White,
                     fontSize = 12.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontFamily = LatoFont.fontFamily
                 ), modifier = Modifier.constrainAs(goalsText) {
                     start.linkTo(eventTimeText.end)
                     end.linkTo(parent.end)
@@ -176,7 +175,8 @@ fun MatchEventItem(
                         color = Color.White,
                         fontSize = 11.sp,
                         textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = LatoFont.fontFamily
                     ),
                 )
                 event.assist.name?.let {
@@ -186,7 +186,8 @@ fun MatchEventItem(
                             color = WhiteAlphaColor,
                             fontSize = 10.sp,
                             textAlign = TextAlign.End,
-                            fontWeight = FontWeight.Normal
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = LatoFont.fontFamily
                         ),
                     )
                 }
@@ -221,7 +222,8 @@ fun MatchEventItem(
                         color = Color.White,
                         fontSize = 11.sp,
                         textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = LatoFont.fontFamily
                     ),
                 )
                 event.assist.name?.let {
@@ -231,7 +233,8 @@ fun MatchEventItem(
                             color = WhiteAlphaColor,
                             fontSize = 10.sp,
                             textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Normal
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = LatoFont.fontFamily
                         ),
                     )
                 }

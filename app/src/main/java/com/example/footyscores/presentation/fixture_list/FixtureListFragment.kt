@@ -18,13 +18,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.annotation.ExperimentalCoilApi
 import com.example.footyscores.common.getDayOfMonth
 import com.example.footyscores.common.getDayOfWeek
 import com.example.footyscores.common.getMonthOfYear
 import com.example.footyscores.presentation.fixture_list.components.FixtureListScreen
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
@@ -32,11 +31,14 @@ import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
-fun TabScreens(navController: NavController, innerPadding: PaddingValues) {
-    val viewModel: FixtureListViewModel = hiltViewModel()
-    val pagerState = viewModel.pagerState
+fun TabScreens(
+    navController: NavController,
+    mainViewModel: FixtureListViewModel,
+    innerPadding: PaddingValues
+) {
+    val pagerState = mainViewModel.pagerState
     val dateRanges by remember {
-        mutableStateOf(viewModel.dateRanges)
+        mutableStateOf(mainViewModel.dateRanges)
     }
     val tabIndex = pagerState.currentPage
     val coroutineScope = rememberCoroutineScope()
@@ -70,12 +72,20 @@ fun TabScreens(navController: NavController, innerPadding: PaddingValues) {
                         ) {
                             Text(
                                 text = dayOfWeek,
-                                style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                style = TextStyle(
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = LatoFont.fontFamily
+                                )
                             )
 
                             Text(
                                 text = "$dayOfMonth $monthOfYear",
-                                style = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                style = TextStyle(
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = LatoFont.fontFamily
+                                )
                             )
                         }
                     })
@@ -89,8 +99,8 @@ fun TabScreens(navController: NavController, innerPadding: PaddingValues) {
         ) {
             FixtureListScreen(
                 navController = navController,
-                state = viewModel.state.value,
-                viewModel::refreshData
+                state = mainViewModel.state.value,
+                mainViewModel::refreshData
             )
         }
     }

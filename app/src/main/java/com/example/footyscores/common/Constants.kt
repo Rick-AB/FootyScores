@@ -16,31 +16,8 @@ object Constants {
     const val RED_CARD_EVENT = "red card"
     const val OWN_GOAL_EVENT = "own goal"
     const val PENALY_SCORED_EVENT = "penalty"
-    val INTERESTED_EVENTS = listOf("Goal", "Card")
-    val COUNTRIES = listOf("England", "Spain", "Germany", "France", "Italy", "Belgium")
-    val INTERESTED_LEAGUE_IDS = listOf(
-        39,
-        40,
-        140,
-        141,
-        135,
-        547,
-        78,
-        79,
-        61,
-        62,
-        4,
-        15,
-        2,
-        45,
-        48,
-        528,
-        547,
-        3,
-        6,
-        9,
-        137,
-        556,
-        143
-    )// ids gotten from api response
+    val eventsOfInterestList = listOf("Goal", "Card")
+    val leaguesOfInterestList =
+        listOf(39, 40, 140, 141, 135, 136, 78, 79, 61, 62)// ids gotten from api response
+    val cupsOfInterestList = listOf(547, 4, 15, 2, 45, 48, 528, 547, 3, 6, 9, 137, 556, 143)
 }

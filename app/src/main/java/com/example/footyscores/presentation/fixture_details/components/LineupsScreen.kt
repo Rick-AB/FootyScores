@@ -2,7 +2,6 @@ package com.example.footyscores.presentation.fixture_details.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,12 +22,12 @@ import com.example.footyscores.R
 import com.example.footyscores.domain.model.fixturebyid.FixtureByIdStartXI
 import com.example.footyscores.domain.model.fixturebyid.FixtureByIdSubstitute
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 
 @Composable
 fun LineupsScreen(
     state: FixtureDetailsState,
-    lazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection
 ) {
     Column(
@@ -37,7 +35,6 @@ fun LineupsScreen(
             .padding(top = 20.dp, start = 8.dp, end = 8.dp)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .nestedScroll(nestedScrollConnection)
     ) {
         val lineupsAvailable = state.fixtureDetails?.lineups?.isNotEmpty()!!
         if (!lineupsAvailable) {
@@ -71,7 +68,8 @@ fun Substitutes(homeSubs: List<FixtureByIdSubstitute>, awaySubs: List<FixtureByI
         style = TextStyle(
             color = WhiteAlphaColor,
             fontSize = 10.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = LatoFont.fontFamily
         )
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -100,7 +98,8 @@ fun Formations(homeFormation: String, awayFormation: String) {
         style = TextStyle(
             color = WhiteAlphaColor,
             fontSize = 10.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = LatoFont.fontFamily
         )
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -111,14 +110,14 @@ fun Formations(homeFormation: String, awayFormation: String) {
     ) {
         Text(
             text = homeFormation,
-            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp),
+            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
             modifier = Modifier
                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                 .weight(1f)
         )
         Text(
             text = awayFormation,
-            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp),
+            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
             modifier = Modifier
                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                 .weight(1f)
@@ -133,7 +132,8 @@ fun StartingXI(homeXI: List<FixtureByIdStartXI>, awayXI: List<FixtureByIdStartXI
         style = TextStyle(
             color = WhiteAlphaColor,
             fontSize = 10.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = LatoFont.fontFamily
         )
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -169,13 +169,18 @@ fun PlayerItem(playerNumber: String, playerName: String) {
                 .border(1.dp, color = Color.White, CircleShape)
         ) {
             Text(
-                text = playerNumber, style = TextStyle(WhiteAlphaColor, fontSize = 10.sp),
+                text = playerNumber,
+                style = TextStyle(
+                    WhiteAlphaColor,
+                    fontSize = 10.sp,
+                    fontFamily = LatoFont.fontFamily
+                ),
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = playerName,
-            style = TextStyle(WhiteAlphaColor, fontSize = 10.sp),
+            style = TextStyle(WhiteAlphaColor, fontSize = 10.sp, fontFamily = LatoFont.fontFamily),
         )
     }
 }
@@ -187,7 +192,8 @@ fun Coaches(homeCoach: String, awayCoach: String) {
         style = TextStyle(
             color = WhiteAlphaColor,
             fontSize = 10.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = LatoFont.fontFamily
         )
     )
     Spacer(modifier = Modifier.height(8.dp))
@@ -198,14 +204,14 @@ fun Coaches(homeCoach: String, awayCoach: String) {
     ) {
         Text(
             text = homeCoach,
-            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp),
+            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
             modifier = Modifier
                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                 .weight(1f)
         )
         Text(
             text = awayCoach,
-            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp),
+            style = TextStyle(WhiteAlphaColor, fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
             modifier = Modifier
                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                 .weight(1f)

@@ -3,6 +3,7 @@ package com.example.footyscores.presentation.fixture_details.components
 import android.app.Activity
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -37,6 +39,7 @@ import androidx.navigation.NavController
 import com.example.footyscores.common.Constants
 import com.example.footyscores.common.getTimeFromDateString
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -55,19 +58,29 @@ fun FixtureDetailsScreen(
     onRefresh: () -> Unit
 ) {
     val context = LocalContext.current
-    val animatedHeaderHeight = 72.dp
-    val animatedHeaderHeightPx =
-        with(LocalDensity.current) { animatedHeaderHeight.roundToPx().toFloat() }
-    val animatedHeaderOffsetHeightPx = remember { mutableStateOf(150f) }
+    val navBarInfoHeight = 110.dp
+    val navBarInfoHeightPx = with(LocalDensity.current) { navBarInfoHeight.roundToPx().toFloat() }
+    val navBarInfoOffsetHeightPx = remember { mutableStateOf(150f) }
     val lazyListState = rememberLazyListState()
     val nestedScrollConnection = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
             val delta = available.y
-            val newOffset = animatedHeaderOffsetHeightPx.value + delta
-            animatedHeaderOffsetHeightPx.value = newOffset.coerceIn(0f, animatedHeaderHeightPx)
+            val newOffset = navBarInfoOffsetHeightPx.value + delta
+            navBarInfoOffsetHeightPx.value = newOffset.coerceIn(0f, navBarInfoHeightPx)
             return Offset.Zero
         }
     }
+    val navBarInfoAlpha = animateFloatAsState(
+        targetValue = when (navBarInfoOffsetHeightPx.value.roundToInt()) {
+            in 0..10 -> 1f
+            in 11..20 -> 0.8f
+            in 21..30 -> 0.7f
+            in 31..40 -> 0.6f
+            in 41..50 -> 0.5f
+            in 51..60 -> 0.4f
+            else -> 0f
+        }
+    )
 
     LaunchedEffect(key1 = state.error) {
         if (!state.error.isNullOrEmpty()) {
@@ -99,7 +112,8 @@ fun FixtureDetailsScreen(
                 awayTeamLogo,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .offset { IntOffset(x = 0, -animatedHeaderOffsetHeightPx.value.roundToInt()) },
+                    .alpha(navBarInfoAlpha.value)
+                    .offset { IntOffset(x = 0, -navBarInfoOffsetHeightPx.value.roundToInt()) },
                 date,
                 state
             )
@@ -180,7 +194,8 @@ fun AnimatedHeader(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = if (state.loading) getTimeFromDateString(date) else infoText,
-            style = TextStyle(Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold),
+            style = TextStyle(Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                fontFamily = LatoFont.fontFamily),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Image(

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.footyscores.R
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
 import com.example.footyscores.presentation.ui.theme.Black
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 import com.google.accompanist.pager.HorizontalPager
@@ -72,7 +73,8 @@ fun TabItems(
                             style = TextStyle(
                                 color = if (index == tabIndex) Orange else WhiteAlphaColor,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = LatoFont.fontFamily
                             )
                         )
                     })
@@ -81,10 +83,10 @@ fun TabItems(
 
         HorizontalPager(count = tabs.size, state = pagerState, modifier = Modifier.weight(1f)) {
             when (this.currentPage) {
-                0 -> InfoScreen(state, lazyListState, nestedScrollConnection)
-                1 -> SummaryScreen(state, lazyListState, nestedScrollConnection)
-                2 -> StatsScreen(state, lazyListState, nestedScrollConnection)
-                3 -> LineupsScreen(state, lazyListState, nestedScrollConnection)
+                0 -> InfoScreen(state, nestedScrollConnection)
+                1 -> SummaryScreen(state, nestedScrollConnection)
+                2 -> StatsScreen(state, nestedScrollConnection)
+                3 -> LineupsScreen(state, nestedScrollConnection)
             }
         }
     }

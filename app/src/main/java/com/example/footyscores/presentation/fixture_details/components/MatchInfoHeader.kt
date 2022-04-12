@@ -28,6 +28,7 @@ import com.example.footyscores.common.Constants.NOT_START
 import com.example.footyscores.common.getFormattedDateFromDateString
 import com.example.footyscores.common.getTimeFromDateString
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.google.accompanist.coil.rememberCoilPainter
@@ -85,7 +86,7 @@ fun MatchInfoHeader(
 
         Text(
             text = if (state.loading) getTimeFromDateString(date) else infoText,
-            style = TextStyle(Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold),
+            style = TextStyle(Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = LatoFont.fontFamily),
             modifier = Modifier.constrainAs(startTimeText) {
                 top.linkTo(homeTeamImage.top)
                 bottom.linkTo(homeTeamImage.bottom)
@@ -98,7 +99,8 @@ fun MatchInfoHeader(
             style = TextStyle(
                 if (state.loading) Color.White else statusDisplayColor,
                 fontSize = 10.sp,
-                fontWeight = statusFontWeight
+                fontWeight = statusFontWeight,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = statusModifier
                 .constrainAs(dateText) {
@@ -126,7 +128,8 @@ fun MatchInfoHeader(
                 Color.White,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.constrainAs(homeTeamText) {
                 top.linkTo(homeTeamImage.bottom, margin = 8.dp)
@@ -153,7 +156,8 @@ fun MatchInfoHeader(
                 Color.White,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily,
             ),
             modifier = Modifier.constrainAs(awayTeamText) {
                 top.linkTo(awayTeamImage.bottom, margin = 8.dp)

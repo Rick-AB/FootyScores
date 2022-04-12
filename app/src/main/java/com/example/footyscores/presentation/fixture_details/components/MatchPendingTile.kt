@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.footyscores.R
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 
@@ -40,7 +41,8 @@ fun MatchPendingTile(stringResource: Int) {
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.fillMaxWidth()
         )

@@ -19,10 +19,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.decode.SvgDecoder
 import com.example.footyscores.domain.model.fixturebydate.League
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import java.util.*
 
 @Composable
@@ -54,13 +54,17 @@ fun SectionHeader(league: League) {
                     style = TextStyle(
                         color = Color.White,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = LatoFont.fontFamily
                     )
                 )
             }
             Text(
                 text = if (league.country?.lowercase(Locale.getDefault()) == "world") league.round!! else league.country!!,
-                style = MaterialTheme.typography.body2.copy(fontSize = 10.sp),
+                style = MaterialTheme.typography.body2.copy(
+                    fontSize = 10.sp,
+                    fontFamily = LatoFont.fontFamily
+                ),
                 modifier = Modifier.alpha(0.7f)
             )
         }

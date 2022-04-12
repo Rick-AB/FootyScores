@@ -1,7 +1,6 @@
 package com.example.footyscores.presentation.fixture_details.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -15,7 +14,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.footyscores.R
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
@@ -31,7 +30,6 @@ import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 @Composable
 fun StatsScreen(
     state: FixtureDetailsState,
-    lazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection
 ) {
     Column(
@@ -39,7 +37,6 @@ fun StatsScreen(
             .fillMaxSize()
             .padding(top = 20.dp, start = 8.dp, end = 8.dp)
             .verticalScroll(rememberScrollState())
-            .nestedScroll(nestedScrollConnection)
     ) {
         val statsAvailable = state.fixtureDetails?.statistics?.isNotEmpty()!!
         if (!statsAvailable) {
@@ -112,14 +109,16 @@ fun StatItem(homeStat: Int, awayStat: Int, statType: String) {
                 style = TextStyle(
                     color = if (homeStatGreater) Color.White else WhiteAlphaColor,
                     fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = LatoFont.fontFamily
                 )
             )
             Text(
                 text = statType, style = TextStyle(
                     color = WhiteAlphaColor,
                     fontSize = 10.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontFamily = LatoFont.fontFamily
                 )
             )
             Text(
@@ -127,7 +126,8 @@ fun StatItem(homeStat: Int, awayStat: Int, statType: String) {
                 style = TextStyle(
                     color = if (!homeStatGreater) Color.White else WhiteAlphaColor,
                     fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = LatoFont.fontFamily
                 )
             )
         }

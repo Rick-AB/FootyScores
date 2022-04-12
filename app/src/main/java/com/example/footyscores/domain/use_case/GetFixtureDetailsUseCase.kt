@@ -1,8 +1,8 @@
-package com.example.footyscores.domain.use_case.get_fixture_details
+package com.example.footyscores.domain.use_case
 
+import com.example.footyscores.common.Constants.leaguesOfInterestList
 import com.example.footyscores.common.Resource
 import com.example.footyscores.domain.model.fixturebyid.FixtureDetails
-import com.example.footyscores.domain.use_case.get_standings.GetStandingsByLeagueId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class GetFixtureDetailsUseCase @Inject constructor(
             val fixtureByIdResponse = getFixtureByIdUseCase(id)
             fixtureDetails = fixtureDetails.copy(fixtureByIdResponse = fixtureByIdResponse)
             if (fixtureByIdResponse is Resource.Success) {
-                val isLeague = fixtureByIdResponse.data?.league?.country != "world"
+                val isLeague = leaguesOfInterestList.contains(fixtureByIdResponse.data?.league?.id)
                 if (isLeague) {
                     val season = fixtureByIdResponse.data?.league?.season!!
                     val leagueId = fixtureByIdResponse.data.league.id!!

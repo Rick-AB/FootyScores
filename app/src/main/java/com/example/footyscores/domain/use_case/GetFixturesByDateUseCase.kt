@@ -1,6 +1,5 @@
-package com.example.footyscores.domain.use_case.get_fixtures
+package com.example.footyscores.domain.use_case
 
-import android.util.Log
 import com.example.footyscores.common.Resource
 import com.example.footyscores.domain.model.fixturebydate.Response
 import com.example.footyscores.domain.repository.FixturesRepo
@@ -14,7 +13,6 @@ class GetFixturesByDateUseCase @Inject constructor(
     private val fixturesRepo: FixturesRepo
 ) {
     operator fun invoke(date: String): Flow<Resource<List<Response>>> = flow {
-        Log.d("TAG", "invoke: GET FIXTURE BY DATE CALL MADE")
         try {
             emit(Resource.Loading())
 

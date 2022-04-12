@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.footyscores.common.Resource
-import com.example.footyscores.domain.use_case.get_fixture_details.GetFixtureDetailsUseCase
+import com.example.footyscores.domain.use_case.GetFixtureDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

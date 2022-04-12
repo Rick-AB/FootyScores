@@ -59,3 +59,30 @@ fun getFormattedDateFromDateString(dateString: String, excludeYear: Boolean = tr
         Locale.getDefault()
     ).format(date!!) else SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date!!)
 }
+
+fun getEventsOfInterest() = listOf("Goal", "Card")
+fun getLeaguesOfInterest() = listOf(
+    39,
+    40,
+    140,
+    141,
+    135,
+    547,
+    78,
+    79,
+    61,
+    62,
+    4,
+    15,
+    2,
+    45,
+    48,
+    528,
+    547,
+    3,
+    6,
+    9,
+    137,
+    556,
+    143
+)

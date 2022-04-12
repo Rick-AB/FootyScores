@@ -3,7 +3,6 @@ package com.example.footyscores.presentation.fixture_details.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,9 +27,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.decode.SvgDecoder
 import com.example.footyscores.R
+import com.example.footyscores.common.Constants.leaguesOfInterestList
 import com.example.footyscores.common.getFormattedDateFromDateString
 import com.example.footyscores.domain.model.leaguestandings.LeagueStandingsStanding
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
@@ -42,7 +42,6 @@ import java.util.*
 @Composable
 fun InfoScreen(
     state: FixtureDetailsState,
-    lazyListState: LazyListState,
     nestedScrollConnection: NestedScrollConnection
 ) {
     val expandedTable = remember {
@@ -50,8 +49,8 @@ fun InfoScreen(
     }
     val homeTeamId = state.fixtureDetails?.teams?.home?.id
     val awayTeamId = state.fixtureDetails?.teams?.away?.id
-    val leagueStandings = state.leagueStandings?.league?.standings?.get(0)!!
-    val currentTeamsStandings = leagueStandings.filter {
+    val leagueStandings = state.leagueStandings?.league?.standings?.get(0)
+    val currentTeamsStandings = leagueStandings?.filter {
         it.team.id == homeTeamId || it.team.id == awayTeamId
     }
 
@@ -60,7 +59,6 @@ fun InfoScreen(
             .fillMaxSize()
             .padding(top = 20.dp, start = 8.dp, end = 8.dp)
             .verticalScroll(rememberScrollState())
-            .nestedScroll(nestedScrollConnection)
     ) {
         FlowRow(
             mainAxisAlignment = MainAxisAlignment.Center,
@@ -97,27 +95,47 @@ fun InfoScreen(
         }
 
         Spacer(modifier = Modifier.height(30.dp))
-        Text(
-            text = stringResource(id = R.string.table).uppercase(),
-            style = TextStyle(
-                color = WhiteAlphaColor,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        val leagueCountry =
-            state.fixtureDetails?.league?.country?.lowercase(Locale.getDefault())
-        if (leagueCountry != "world") {
+        val isLeague = leaguesOfInterestList.contains(state.fixtureDetails?.league?.id)
+        if (isLeague) {
+            val leagueCountry = state.fixtureDetails?.league?.country
             val leagueName = state.fixtureDetails?.league?.name
             val leagueFlag = state.fixtureDetails?.league?.flag
+            Text(
+                text = stringResource(id = R.string.table).uppercase(),
+                style = TextStyle(
+                    color = WhiteAlphaColor,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = LatoFont.fontFamily
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Table(
                 leagueName!!, leagueFlag,
                 leagueCountry!!.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                if (expandedTable.value) leagueStandings else currentTeamsStandings,
+                if (expandedTable.value) leagueStandings!! else currentTeamsStandings!!,
                 expandedTable.value
             ) {
                 expandedTable.value = !expandedTable.value
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .border(
+                        0.4.dp,
+                        color = WhiteAlphaColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding()
+            ) {
+                val cupRound = state.fixtureDetails?.league?.round
+                val cupName = state.fixtureDetails?.league?.name
+                val cupLogo = state.fixtureDetails?.league?.logo
+                TableHeader(
+                    leagueName = cupName!!,
+                    leagueFlag = cupLogo!!,
+                    leagueCountry = cupRound!!
+                )
             }
         }
         Spacer(modifier = Modifier.height(50.dp))
@@ -182,8 +200,9 @@ fun Table(
             Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
             standings.forEach {
                 TableValue(modifier = Modifier, it)
-                Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
+//                Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
             }
+            Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -197,7 +216,8 @@ fun Table(
                     style = TextStyle(
                         color = WhiteAlphaColor,
                         fontSize = 10.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontFamily = LatoFont.fontFamily
                     )
                 )
             }
@@ -219,7 +239,8 @@ fun TableValue(modifier: Modifier, leagueStandingsStanding: LeagueStandingsStand
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.width(30.dp)
         )
@@ -236,7 +257,8 @@ fun TableValue(modifier: Modifier, leagueStandingsStanding: LeagueStandingsStand
                 style = TextStyle(
                     color = WhiteAlphaColor,
                     fontSize = 10.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    fontFamily = LatoFont.fontFamily
                 )
             )
         }
@@ -247,7 +269,8 @@ fun TableValue(modifier: Modifier, leagueStandingsStanding: LeagueStandingsStand
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(1f)
         )
@@ -257,7 +280,8 @@ fun TableValue(modifier: Modifier, leagueStandingsStanding: LeagueStandingsStand
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(1f)
         )
@@ -267,7 +291,8 @@ fun TableValue(modifier: Modifier, leagueStandingsStanding: LeagueStandingsStand
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(1f)
         )
@@ -288,7 +313,8 @@ fun TableKeys() {
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.width(30.dp)
         )
@@ -299,6 +325,7 @@ fun TableKeys() {
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(3.5f)
         )
@@ -309,6 +336,7 @@ fun TableKeys() {
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(1f)
         )
@@ -318,7 +346,8 @@ fun TableKeys() {
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(1f)
         )
@@ -328,7 +357,8 @@ fun TableKeys() {
                 color = WhiteAlphaColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontFamily = LatoFont.fontFamily
             ),
             modifier = Modifier.weight(1f)
         )
@@ -360,10 +390,18 @@ fun TableHeader(leagueName: String, leagueFlag: String?, leagueCountry: String) 
                 style = TextStyle(
                     color = Color.White,
                     fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = LatoFont.fontFamily
                 )
             )
-            Text(text = leagueCountry, style = TextStyle(color = WhiteAlphaColor, fontSize = 10.sp))
+            Text(
+                text = leagueCountry,
+                style = TextStyle(
+                    color = WhiteAlphaColor,
+                    fontSize = 10.sp,
+                    fontFamily = LatoFont.fontFamily
+                )
+            )
         }
 
     }
@@ -380,7 +418,11 @@ fun InfoItem(icon: Int, text: String) {
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = text,
-            style = TextStyle(color = WhiteAlphaColor, fontSize = 10.sp)
+            style = TextStyle(
+                color = WhiteAlphaColor,
+                fontSize = 10.sp,
+                fontFamily = LatoFont.fontFamily
+            )
         )
     }
 }

@@ -31,6 +31,7 @@ import com.example.footyscores.common.Constants.NOT_START
 import com.example.footyscores.common.Constants.SECOND_HALF
 import com.example.footyscores.common.getTimeFromDateString
 import com.example.footyscores.domain.model.fixturebydate.Response
+import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
@@ -93,7 +94,8 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
             fontSize = 11.sp,
             fontWeight = matchStatusFontWeight,
             modifier = modifierAlpha.width(30.dp),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontFamily = LatoFont.fontFamily
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -127,7 +129,7 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = matchInfo.teams.home.name!!,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 12.sp),
+                    style = MaterialTheme.typography.body1.copy(fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
                     modifier = Modifier.weight(1f)
                 )
 
@@ -136,7 +138,8 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
                         text = matchInfo.goals.home.toString(),
                         style = MaterialTheme.typography.body1.copy(
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = LatoFont.fontFamily
                         )
                     )
                 }
@@ -169,7 +172,7 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = matchInfo.teams.away.name!!,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 12.sp),
+                    style = MaterialTheme.typography.body1.copy(fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
                     modifier = Modifier.weight(1f)
                 )
 
@@ -178,7 +181,8 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
                         text = matchInfo.goals.away.toString(),
                         style = MaterialTheme.typography.body1.copy(
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = LatoFont.fontFamily
                         )
                     )
                 }

@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.footyscores.common.Constants.INTERESTED_LEAGUE_IDS
+import com.example.footyscores.common.Constants.cupsOfInterestList
+import com.example.footyscores.common.Constants.leaguesOfInterestList
 import com.example.footyscores.common.Resource
 import com.example.footyscores.common.getDateRanges
 import com.example.footyscores.common.getFormattedDateStringFormat
 import com.example.footyscores.domain.model.fixturebydate.Response
-import com.example.footyscores.domain.use_case.get_fixtures.GetFixturesByDateUseCase
-import com.google.accompanist.pager.ExperimentalPagerApi
+import com.example.footyscores.domain.use_case.GetFixturesByDateUseCase
 import com.google.accompanist.pager.PagerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalPagerApi::class)
 @HiltViewModel
 class FixtureListViewModel @Inject constructor(
     private val getFixturesByDateUseCase: GetFixturesByDateUseCase
@@ -81,7 +80,7 @@ class FixtureListViewModel @Inject constructor(
         }
         return fixtures.filter {
             val leagueId = it.league.id!!
-            INTERESTED_LEAGUE_IDS.contains(leagueId)
+            leaguesOfInterestList.contains(leagueId) || cupsOfInterestList.contains(leagueId)
         }
     }
 }
