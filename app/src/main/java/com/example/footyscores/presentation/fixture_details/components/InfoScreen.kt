@@ -373,14 +373,15 @@ fun TableHeader(leagueName: String, leagueFlag: String?, leagueCountry: String) 
             .fillMaxWidth()
             .padding(top = 14.dp, bottom = 14.dp, start = 12.dp, end = 8.dp)
     ) {
-
+        val isSvg = !leagueFlag?.endsWith("svg")!!
+        val modifier =
+            if (!isSvg) Modifier.size(30.dp, 12.dp) else Modifier.size(48.dp)
         Image(
             painter = rememberImagePainter(data = leagueFlag, builder = {
                 decoder(SvgDecoder(LocalContext.current))
             }),
             contentDescription = "League flag",
-            modifier = Modifier
-                .size(30.dp, 12.dp)
+            modifier = modifier
                 .clip(RoundedCornerShape(4.dp))
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -394,6 +395,7 @@ fun TableHeader(leagueName: String, leagueFlag: String?, leagueCountry: String) 
                     fontFamily = LatoFont.fontFamily
                 )
             )
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = leagueCountry,
                 style = TextStyle(

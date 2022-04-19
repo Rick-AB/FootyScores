@@ -1,15 +1,23 @@
 package com.example.footyscores.domain.model.fixturebydate
 
 
+import androidx.room.Embedded
 import com.google.gson.annotations.SerializedName
 
 data class Score(
     @SerializedName("extratime")
-    val extratime: Extratime = Extratime(),
+    @Embedded(prefix = "extratime_")
+    val extratime: Extratime?,
+
     @SerializedName("fulltime")
-    val fulltime: Fulltime = Fulltime(),
+    @Embedded(prefix = "fulltime_")
+    val fulltime: Fulltime?,
+
     @SerializedName("halftime")
-    val halftime: Halftime = Halftime(),
+    @Embedded(prefix = "halftime_")
+    val halftime: Halftime?,
+
     @SerializedName("penalty")
-    val penalty: Penalty = Penalty()
+    @Embedded(prefix = "penalty_")
+    val penalty: Penalty?
 )

@@ -100,7 +100,7 @@ fun TabScreens(
             FixtureListScreen(
                 navController = navController,
                 state = mainViewModel.state.value,
-                mainViewModel::refreshData
+                mainViewModel::onEvent
             )
         }
     }

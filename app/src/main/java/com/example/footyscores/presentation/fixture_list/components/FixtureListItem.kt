@@ -9,6 +9,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +32,7 @@ import com.example.footyscores.common.Constants.NOT_START
 import com.example.footyscores.common.Constants.SECOND_HALF
 import com.example.footyscores.common.getTimeFromDateString
 import com.example.footyscores.domain.model.fixturebydate.Response
+import com.example.footyscores.presentation.fixture_list.FixtureListEvent
 import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.LightGreyColor
 import com.example.footyscores.presentation.ui.theme.Orange
@@ -39,7 +41,7 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
 
 @Composable
-fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
+fun FixtureListItem(matchInfo: Response, onClick: () -> Unit, onEvent: (FixtureListEvent) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -49,32 +51,34 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
             .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val matchStatusShort = matchInfo.fixture.status.short
-        val matchStatusDisplayText = when (matchStatusShort) {
-            NOT_START -> matchInfo.fixture.date.let { getTimeFromDateString(it) }
-            FULL_TIME -> "FT"
-            HALF_TIME -> "HT"
-            else -> matchInfo.fixture.status.elapsed.toString() + "`"
-        }
-        val matchStatusDisplayColor = when (matchStatusShort) {
-            NOT_START -> Color.White
-            FULL_TIME -> Color.White
-            else -> Orange
-        }
-        val matchStatusFontWeight = when (matchStatusShort) {
-            NOT_START -> FontWeight.Normal
-            FULL_TIME -> FontWeight.Normal
-            HALF_TIME -> FontWeight.Bold
-            else -> FontWeight.Bold
-        }
-        val modifierAlpha = when (matchStatusShort) {
-            NOT_START -> Modifier.alpha(0.7f)
-            FULL_TIME -> Modifier.alpha(0.7f)
-            else -> Modifier.alpha(1f)
-        }
-
+        val matchStatusShort = matchInfo.fixture.status.statusShort
         val matchOngoing =
             matchStatusShort == LIVE || matchStatusShort == HALF_TIME || matchStatusShort == FIRST_HALF || matchStatusShort == SECOND_HALF || matchStatusShort == EXTRA_TIME
+
+        val matchStatusDisplayText = when {
+            matchStatusShort == NOT_START -> matchInfo.fixture.date.let { getTimeFromDateString(it) }
+            matchStatusShort == HALF_TIME -> "HT"
+            matchStatusShort == FULL_TIME -> "FT"
+            matchOngoing -> matchInfo.fixture.status.elapsed.toString() + "`"
+            else -> "$matchStatusShort"
+
+        }
+
+        val matchStatusDisplayColor = when {
+            matchOngoing -> Orange
+            else -> Color.White
+        }
+
+        val matchStatusFontWeight = when {
+            matchOngoing -> FontWeight.Bold
+            else -> FontWeight.Normal
+        }
+
+        val modifierAlpha = when {
+            matchOngoing -> Modifier.alpha(1f)
+            else -> Modifier.alpha(0.7f)
+        }
+
         if (matchOngoing) {
             Box(
                 modifier = Modifier
@@ -129,13 +133,16 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = matchInfo.teams.home.name!!,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 12.sp,
+                        fontFamily = LatoFont.fontFamily
+                    ),
                     modifier = Modifier.weight(1f)
                 )
 
-                if (matchStatusShort != NOT_START) {
+                matchInfo.goals?.home?.let {
                     Text(
-                        text = matchInfo.goals.home.toString(),
+                        text = "$it",
                         style = MaterialTheme.typography.body1.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
@@ -172,13 +179,16 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = matchInfo.teams.away.name!!,
-                    style = MaterialTheme.typography.body1.copy(fontSize = 12.sp, fontFamily = LatoFont.fontFamily),
+                    style = MaterialTheme.typography.body1.copy(
+                        fontSize = 12.sp,
+                        fontFamily = LatoFont.fontFamily
+                    ),
                     modifier = Modifier.weight(1f)
                 )
 
-                if (matchStatusShort != NOT_START) {
+                matchInfo.goals?.away?.let {
                     Text(
-                        text = matchInfo.goals.away.toString(),
+                        text = "$it",
                         style = MaterialTheme.typography.body1.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
@@ -189,8 +199,28 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit) {
             }
         }
 
+        val fixtureId = matchInfo.fixture.id
+        val isFavorite = matchInfo.isFavorite
+        val favoriteIconEnabled =
+            matchInfo.isFavorite || matchOngoing || matchStatusShort == NOT_START
+        val favIconModifier = when {
+            favoriteIconEnabled -> Modifier
+                .alpha(1f)
+                .clickable {
+                    if (!favoriteIconEnabled) {
+                        return@clickable
+                    }
+                    onEvent(FixtureListEvent.OnFavoriteClick(fixtureId, !isFavorite))
+                }
+            else -> Modifier.alpha(0.5f)
+        }
         Spacer(modifier = Modifier.width(12.dp))
-        Icon(imageVector = Icons.Default.StarBorder, contentDescription = "Favorite")
+        Icon(
+            imageVector = if (isFavorite) Icons.Default.Star else Icons.Default.StarBorder,
+            contentDescription = "Favorite",
+            modifier = favIconModifier,
+            tint = if (isFavorite) Orange else Color.White
+        )
     }
 }
 

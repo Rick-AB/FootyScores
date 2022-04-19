@@ -34,16 +34,17 @@ fun SectionHeader(league: League) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         val url = league.flag ?: league.logo
+        val isSvg = url?.endsWith("svg")!!
+        val modifier =
+            if (isSvg) Modifier.size(30.dp, 12.dp) else Modifier.size(48.dp)
         Image(
-            painter = if (!url?.endsWith("svg")!!) rememberImagePainter(data = url) else rememberImagePainter(
+            painter = if (!isSvg) rememberImagePainter(data = url) else rememberImagePainter(
                 data = url,
                 builder = {
                     decoder(SvgDecoder(LocalContext.current))
                 }),
             contentDescription = "SVG Image",
-            modifier = Modifier
-                .size(30.dp, 12.dp)
-                .clip(RoundedCornerShape(4.dp)),
+            modifier = modifier.clip(RoundedCornerShape(4.dp)),
         )
         Spacer(modifier = Modifier.width(12.dp))
 
@@ -59,6 +60,7 @@ fun SectionHeader(league: League) {
                     )
                 )
             }
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = if (league.country?.lowercase(Locale.getDefault()) == "world") league.round!! else league.country!!,
                 style = MaterialTheme.typography.body2.copy(

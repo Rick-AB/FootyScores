@@ -22,9 +22,21 @@ constructor(
         _state.value = _state.value.copy(loading = true)
     }
 
-    fun getFixtureById(id: Int) {
+    fun onEvent(event: FixtureDetailsEvent) {
+        when (event) {
+            is FixtureDetailsEvent.OnRefresh -> {
+                refreshData()
+            }
+            is FixtureDetailsEvent.OnScreenLoad -> {
+                getFixtureById(event.fixtureId)
+            }
+        }
+    }
+
+    private fun getFixtureById(id: Int) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(loading = true)
+            _state.value =
+                if (_state.value.isRefreshing) _state.value.copy() else _state.value.copy(loading = true)
             val result = getFixtureDetailsUseCase(id)
             val fixtureDetails = result.fixtureByIdResponse
             val leagueStandings = result.leagueStandingsByLeagueIdResponse
@@ -54,7 +66,7 @@ constructor(
         }
     }
 
-    fun refresh() {
+    private fun refreshData() {
         _state.value = _state.value.copy(isRefreshing = true)
         getFixtureById(_state.value.fixtureDetails?.fixture?.id!!)
     }

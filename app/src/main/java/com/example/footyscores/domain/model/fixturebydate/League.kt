@@ -5,17 +5,17 @@ import com.google.gson.annotations.SerializedName
 
 data class League(
     @SerializedName("country")
-    val country: String? = "Morocco",
+    val country: String?,
     @SerializedName("flag")
-    val flag: String? = "https://media.api-sports.io/flags/ma.svg",
+    val flag: String?,
     @SerializedName("id")
-    val id: Int? = 200,
+    val id: Int?,
     @SerializedName("logo")
-    val logo: String? = "https://media.api-sports.io/football/leagues/115.png",
+    val logo: String?,
     @SerializedName("name")
-    val name: String? = "Botola Pro",
+    val name: String?,
     @SerializedName("round")
-    val round: String? = "Regular Season - 14",
+    val round: String?,
     @SerializedName("season")
-    val season: Int? = 2019
+    val season: Int?
 )

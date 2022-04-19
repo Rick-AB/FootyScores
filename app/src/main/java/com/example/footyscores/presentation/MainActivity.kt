@@ -33,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsFragment
+import com.example.footyscores.presentation.fixture_list.FixtureListEvent
 import com.example.footyscores.presentation.fixture_list.FixtureListViewModel
 import com.example.footyscores.presentation.fixture_list.TabScreens
 import com.example.footyscores.presentation.ui.theme.FootyScoresTheme
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             onItemClick = {
                                 if (it.name == "Refresh") {
-                                    mainViewModel.refreshData()
+                                    mainViewModel.onEvent(FixtureListEvent.OnRefresh)
                                 } else {
                                     navController.navigate(it.route)
                                 }
@@ -78,7 +79,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun BottomNavigationBar(
     items: List<BottomNavItem>,

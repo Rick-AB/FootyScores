@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName
 
 data class GoalsDto(
     @SerializedName("away")
-    val away: Int = 3,
+    val away: Int?,
     @SerializedName("home")
-    val home: Int = 0
+    val home: Int?
 ) {
     internal fun toDomainModelGoals(): Goals {
         return Goals(

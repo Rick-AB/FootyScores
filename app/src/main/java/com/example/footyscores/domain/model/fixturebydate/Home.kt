@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class Home(
     @SerializedName("id")
-    val id: Int? = 967,
+    val id: Int?,
     @SerializedName("logo")
-    val logo: String? = "https://media.api-sports.io/football/teams/967.png",
+    val logo: String?,
     @SerializedName("name")
-    val name: String? = "Rapide Oued ZEM",
+    val name: String?,
     @SerializedName("winner")
-    val winner: Boolean? = false
+    val winner: Boolean?
 )

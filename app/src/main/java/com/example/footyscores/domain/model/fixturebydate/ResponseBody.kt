@@ -3,7 +3,7 @@ package com.example.footyscores.domain.model.fixturebydate
 
 import com.google.gson.annotations.SerializedName
 
-data class ResponseData(
+data class ResponseBody(
     @SerializedName("errors")
     val errors: List<Any>,
     @SerializedName("get")

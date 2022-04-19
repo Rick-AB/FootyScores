@@ -1,7 +1,7 @@
 package com.example.footyscores.data.remote.dto.fixturebydatedto
 
 
-import com.example.footyscores.domain.model.fixturebydate.ResponseData
+import com.example.footyscores.domain.model.fixturebydate.ResponseBody
 import com.google.gson.annotations.SerializedName
 
 data class ResponseBodyDto(
@@ -18,8 +18,8 @@ data class ResponseBodyDto(
     @SerializedName("results")
     val results: Int
 ) {
-    internal fun toDomainModelResponseData(): ResponseData {
-        return ResponseData(
+    internal fun toDomainModelResponseData(): ResponseBody {
+        return ResponseBody(
             errors = errors,
             get = get,
             paging = paging.toDomainModelPaging(),

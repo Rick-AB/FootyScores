@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Halftime(
     @SerializedName("away")
-    val away: Int? = 1,
+    val away: Int?,
     @SerializedName("home")
-    val home: Int? = 0
+    val home: Int?
 )

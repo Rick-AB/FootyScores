@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class Venue(
     @SerializedName("city")
-    val city: String? = "Oued Zem",
+    val city: String?,
     @SerializedName("id")
-    val id: Int? = 1887,
+    val id: Int?,
     @SerializedName("name")
-    val name: String? = "Stade Municipal"
+    val name: String?
 )

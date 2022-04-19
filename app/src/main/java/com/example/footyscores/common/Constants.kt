@@ -10,6 +10,7 @@ object Constants {
     const val FIRST_HALF = "1H"
     const val SECOND_HALF = "2H"
     const val EXTRA_TIME = "ET"
+    const val AFTER_EXTRA_TIME = "AET"
     const val GOAL_EVENT = "goal"
     const val CARD_EVENT = "card"
     const val YELLOW_CARD_EVENT = "yellow card"

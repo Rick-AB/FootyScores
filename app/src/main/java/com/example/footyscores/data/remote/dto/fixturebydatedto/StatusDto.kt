@@ -15,8 +15,8 @@ data class StatusDto(
     internal fun toDomainModelStatus(): Status {
         return Status(
             elapsed = elapsed,
-            long = long,
-            short = short
+            statusLong = long,
+            statusShort = short
         )
     }
 }

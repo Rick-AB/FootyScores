@@ -5,13 +5,14 @@ import com.google.gson.annotations.SerializedName
 
 data class Response(
     @SerializedName("fixture")
-    val fixture: Fixture = Fixture(),
+    val fixture: Fixture,
     @SerializedName("goals")
-    val goals: Goals = Goals(),
+    val goals: Goals?,
     @SerializedName("league")
-    val league: League = League(),
+    val league: League,
     @SerializedName("score")
-    val score: Score = Score(),
+    val score: Score,
     @SerializedName("teams")
-    val teams: Teams = Teams()
+    val teams: Teams,
+    val isFavorite: Boolean = false,
 )

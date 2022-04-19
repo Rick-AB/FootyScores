@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.footyscores.common.Constants
+import com.example.footyscores.common.Constants.AFTER_EXTRA_TIME
 import com.example.footyscores.common.Constants.FULL_TIME
 import com.example.footyscores.common.Constants.HALF_TIME
 import com.example.footyscores.common.Constants.NOT_START
@@ -62,18 +63,21 @@ fun MatchInfoHeader(
             NOT_START -> getFormattedDateFromDateString(date)
             FULL_TIME -> "Full Time"
             HALF_TIME -> "Half Time"
+            AFTER_EXTRA_TIME -> "AET"
             else -> state.fixtureDetails?.fixture?.status?.elapsed.toString() + "`"
         }
 
         val statusDisplayColor = when (matchStatusShort) {
             NOT_START -> Color.White
             FULL_TIME -> Color.White
+            AFTER_EXTRA_TIME -> Color.White
             else -> Orange
         }
 
         val statusModifier = when (matchStatusShort) {
             NOT_START -> Modifier.alpha(0.7f)
             FULL_TIME -> Modifier.alpha(0.7f)
+            AFTER_EXTRA_TIME -> Modifier.alpha(0.7f)
             else -> Modifier.alpha(1f)
         }
 
@@ -81,12 +85,18 @@ fun MatchInfoHeader(
             NOT_START -> FontWeight.Normal
             FULL_TIME -> FontWeight.Normal
             HALF_TIME -> FontWeight.Bold
+            AFTER_EXTRA_TIME -> FontWeight.Normal
             else -> FontWeight.Bold
         }
 
         Text(
             text = if (state.loading) getTimeFromDateString(date) else infoText,
-            style = TextStyle(Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = LatoFont.fontFamily),
+            style = TextStyle(
+                Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = LatoFont.fontFamily
+            ),
             modifier = Modifier.constrainAs(startTimeText) {
                 top.linkTo(homeTeamImage.top)
                 bottom.linkTo(homeTeamImage.bottom)
@@ -187,5 +197,10 @@ fun MatchInfoHeader(
 @Preview
 @Composable
 fun DefaultPrev() {
-//    MatchInfoHeader()
+    Box(
+        modifier = Modifier
+            .size(8.dp, 50.dp)
+            .clip(RoundedCornerShape(topEndPercent = 150, bottomEndPercent = 150))
+            .background(Orange)
+    )
 }

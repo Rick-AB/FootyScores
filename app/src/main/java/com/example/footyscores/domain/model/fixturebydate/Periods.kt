@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Periods(
     @SerializedName("first")
-    val first: Int? = 1580997600,
+    val first: Int?,
     @SerializedName("second")
-    val second: Int? = 1580997600
+    val second: Int?
 )

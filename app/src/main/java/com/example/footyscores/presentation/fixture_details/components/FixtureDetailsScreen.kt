@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.footyscores.common.Constants
 import com.example.footyscores.common.getTimeFromDateString
+import com.example.footyscores.presentation.fixture_details.FixtureDetailsEvent
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
 import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.Orange
@@ -55,7 +56,7 @@ fun FixtureDetailsScreen(
     awayTeamName: String,
     awayTeamLogo: String,
     date: String,
-    onRefresh: () -> Unit
+    onRefreshEvent: (FixtureDetailsEvent) -> Unit
 ) {
     val context = LocalContext.current
     val navBarInfoHeight = 110.dp
@@ -81,6 +82,7 @@ fun FixtureDetailsScreen(
             else -> 0f
         }
     )
+
 
     LaunchedEffect(key1 = state.error) {
         if (!state.error.isNullOrEmpty()) {
@@ -119,50 +121,51 @@ fun FixtureDetailsScreen(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(nestedScrollConnection),
-            state = lazyListState
-        ) {
-            item {
-                MatchInfoHeader(
-                    state,
-                    homeTeamName,
-                    homoTeamLogo,
-                    awayTeamName,
-                    awayTeamLogo,
-                    date,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            item {
-                AnimatedVisibility(visible = state.loading) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillParentMaxSize()
-                    ) {
-                        CircularProgressIndicator(color = Orange)
-                    }
-
-
+        SwipeRefresh(
+//            indicatorPadding = PaddingValues(top = 50.dp),
+            state = rememberSwipeRefreshState(isRefreshing = state.isRefreshing),
+            onRefresh = { onRefreshEvent(FixtureDetailsEvent.OnRefresh) }) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .nestedScroll(nestedScrollConnection),
+                state = lazyListState
+            ) {
+                item {
+                    MatchInfoHeader(
+                        state,
+                        homeTeamName,
+                        homoTeamLogo,
+                        awayTeamName,
+                        awayTeamLogo,
+                        date,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
-                AnimatedVisibility(visible = !state.loading) {
-                    Box(
-                        modifier = Modifier
-                            .fillParentMaxSize()
-                    ) {
-                        SwipeRefresh(
-                            indicatorPadding = PaddingValues(top = 50.dp),
-                            state = rememberSwipeRefreshState(isRefreshing = state.isRefreshing),
-                            onRefresh = { onRefresh() }) {
+                item {
+                    AnimatedVisibility(visible = state.loading) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                        ) {
+                            CircularProgressIndicator(color = Orange)
+                        }
+
+
+                    }
+                    AnimatedVisibility(visible = !state.loading) {
+                        Box(
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                        ) {
                             TabItems(state, lazyListState, nestedScrollConnection)
                         }
                     }
                 }
             }
         }
+
 
     }
 }
@@ -194,8 +197,10 @@ fun AnimatedHeader(
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = if (state.loading) getTimeFromDateString(date) else infoText,
-            style = TextStyle(Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold,
-                fontFamily = LatoFont.fontFamily),
+            style = TextStyle(
+                Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                fontFamily = LatoFont.fontFamily
+            ),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Image(

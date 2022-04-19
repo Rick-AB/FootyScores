@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Extratime(
     @SerializedName("away")
-    val away: Int? = null,
+    val away: Int?,
     @SerializedName("home")
-    val home: Int? = null
+    val home: Int?
 )

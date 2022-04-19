@@ -1,14 +1,18 @@
 package com.example.footyscores.di
 
+import android.content.Context
+import androidx.room.Room
 import com.example.footyscores.BuildConfig
 import com.example.footyscores.common.Constants.BASE_URL
 import com.example.footyscores.common.Constants.RAPID_API_HOST
+import com.example.footyscores.data.local.FootyDatabase
 import com.example.footyscores.data.remote.ApiFootball
 import com.example.footyscores.data.repository.FixturesRepoImpl
 import com.example.footyscores.domain.repository.FixturesRepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -42,7 +46,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepo(apiFootball: ApiFootball): FixturesRepo =
-        FixturesRepoImpl(apiFootball)
+    fun provideRepo(apiFootball: ApiFootball, footyDatabase: FootyDatabase): FixturesRepo =
+        FixturesRepoImpl(apiFootball, footyDatabase)
 
+    @Provides
+    @Singleton
+    fun provideFootyDatabase(
+        @ApplicationContext context: Context
+    ): FootyDatabase = Room.databaseBuilder(
+        context,
+        FootyDatabase::class.java,
+        "footy_db"
+    ).build()
 }

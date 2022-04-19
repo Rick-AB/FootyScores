@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Goals(
     @SerializedName("away")
-    val away: Int? = 3,
+    val away: Int?,
     @SerializedName("home")
-    val home: Int? = 0
+    val home: Int?
 )

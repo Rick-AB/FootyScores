@@ -1,23 +1,34 @@
 package com.example.footyscores.domain.model.fixturebydate
 
 
+import androidx.room.Embedded
 import com.google.gson.annotations.SerializedName
 
 data class Fixture(
     @SerializedName("date")
-    val date: String = "2020-02-06T14:00:00+00:00",
+    val date: String,
+
     @SerializedName("id")
-    val id: Int = 239625,
+    val id: Int,
+
     @SerializedName("periods")
-    val periods: Periods = Periods(),
+    @Embedded(prefix = "periods_")
+    val periods: Periods,
+
     @SerializedName("referee")
-    val referee: String? = "Mike Dean",
+    val referee: String?,
+
     @SerializedName("status")
-    val status: Status = Status(),
+    @Embedded(prefix = "status_")
+    val status: Status,
+
     @SerializedName("timestamp")
-    val timestamp: Int? = 1580997600,
+    val timestamp: Int?,
+
     @SerializedName("timezone")
-    val timezone: String? = "UTC",
+    val timezone: String?,
+
     @SerializedName("venue")
-    val venue: Venue = Venue()
+    @Embedded(prefix = "venue_")
+    val venue: Venue
 )
