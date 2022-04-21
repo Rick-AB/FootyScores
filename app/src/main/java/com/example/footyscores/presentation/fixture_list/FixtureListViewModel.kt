@@ -74,12 +74,13 @@ class FixtureListViewModel @Inject constructor(
                         val filteredResponse = filterFixturesByLeagueIds(result.data ?: emptyList())
                         _state.value = _state.value.copy(
                             fixtures = filteredResponse,
-                            isRefreshing = false,
-                            isLoading = false
                         )
                     }
                     is Resource.Loading -> {
-                        _state.value = _state.value.copy(isLoading = true)
+                        _state.value = _state.value.copy(
+                            isLoading = result.loading,
+                            isRefreshing = if (result.loading) _state.value.isRefreshing else false
+                        )
                     }
                     is Resource.Error -> {
                         _state.value =

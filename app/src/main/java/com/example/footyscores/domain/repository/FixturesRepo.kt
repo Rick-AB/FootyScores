@@ -7,7 +7,7 @@ import com.example.footyscores.domain.model.fixturebydate.Response
 import kotlinx.coroutines.flow.Flow
 
 interface FixturesRepo {
-    suspend fun getFixturesByDate(
+    fun getFixturesByDate(
         date: String,
         fetchFromNetwork: Boolean
     ): Flow<Resource<List<Response>>>
@@ -15,4 +15,5 @@ interface FixturesRepo {
     suspend fun getFixtureById(id: Int): FixtureByIdResponseBodyDto
     suspend fun getStandingsByLeagueId(season: Int, leagueId: Int): LeagueStandingsResponseBodyDto
     suspend fun updateFixtureFavoriteStatus(fixtureId: Int, favoriteStatus: Boolean)
+    fun getFavoriteFixture(): Flow<Resource<List<Response>>>
 }

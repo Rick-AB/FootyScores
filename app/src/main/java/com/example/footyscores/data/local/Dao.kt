@@ -26,5 +26,5 @@ interface Dao {
     fun getFixturesByDate(date: String): Flow<List<ResponseEntity>>
 
     @Query("SELECT * FROM ResponseEntity WHERE isFavorite = :favoriteStatus")
-    suspend fun getFavoriteFixtures(favoriteStatus: Boolean): List<ResponseEntity>
+    fun getFavoriteFixtures(favoriteStatus: Boolean): Flow<List<ResponseEntity>>
 }

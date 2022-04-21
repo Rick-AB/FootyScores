@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetFixturesByDateUseCase @Inject constructor(
     private val fixturesRepo: FixturesRepo,
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         date: String,
         fetchFromNetwork: Boolean = false
     ): Flow<Resource<List<Response>>> =

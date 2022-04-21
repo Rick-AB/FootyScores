@@ -1,15 +1,13 @@
 package com.example.footyscores.presentation
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SportsSoccer
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.runtime.Composable
@@ -19,12 +17,12 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,6 +30,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.footyscores.R
+import com.example.footyscores.presentation.favoritefixtures.FavoriteFixturesFragment
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsFragment
 import com.example.footyscores.presentation.fixture_list.FixtureListEvent
 import com.example.footyscores.presentation.fixture_list.FixtureListViewModel
@@ -44,15 +44,24 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val mainViewModel: FixtureListViewModel by viewModels()
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                mainViewModel.state.value.isLoading
+            }
+        }
         setContent {
             FootyScoresTheme {
                 val navController = rememberNavController()
-                val mainViewModel: FixtureListViewModel =
-                    viewModel(LocalContext.current as ComponentActivity)
+
                 val bottomBarItems = listOf(
                     BottomNavItem("Scores", "fixture_list_screen", Icons.Default.SportsSoccer),
                     BottomNavItem("Favorite", "favorites_screen", Icons.Default.StarBorder),
-                    BottomNavItem("Refresh", "", Icons.Default.Refresh),
+                    BottomNavItem(
+                        "Refresh",
+                        "",
+                        ImageVector.vectorResource(id = R.drawable.ic_refresh)
+                    ),
                 )
                 Scaffold(bottomBar = {
                     val currentRoute =
@@ -97,6 +106,7 @@ fun BottomNavigationBar(
                 unselectedContentColor = Color.White,
                 onClick = { onItemClick(item) },
                 icon = {
+                    val iconModifier = Modifier.size(20.dp)
                     Column(horizontalAlignment = CenterHorizontally) {
                         if (item.name == "Refresh") {
                             val currentRotation = remember {
@@ -116,11 +126,16 @@ fun BottomNavigationBar(
                             Icon(
                                 imageVector = item.icon,
                                 contentDescription = item.name,
-                                modifier = Modifier.rotate(currentRotation.value)
+                                modifier = iconModifier.rotate(currentRotation.value)
                             )
                         } else {
-                            Icon(imageVector = item.icon, contentDescription = item.name)
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.name,
+                                modifier = iconModifier
+                            )
                         }
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(text = item.name, textAlign = TextAlign.Center, fontSize = 10.sp)
                     }
                 }
@@ -141,7 +156,7 @@ fun Screens(
             TabScreens(navController, mainViewModel, innerPadding)
         }
         composable(Screens.FavoritesScreen.name) {
-
+            FavoriteFixturesFragment(navController = navController, innerPadding = innerPadding)
         }
         composable(
             Screens.FixtureDetailsScreen.name + Screens.FixtureDetailsScreen.arguments,
@@ -173,13 +188,5 @@ fun Screens(
                 time = time!!
             )
         }
-    }
-}
-
-@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun DefaultPreview() {
-    FootyScoresTheme(darkTheme = true) {
-//        FixtureListScreen(12345677L, )
     }
 }

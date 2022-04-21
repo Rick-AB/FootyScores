@@ -9,6 +9,7 @@ import com.example.footyscores.domain.model.fixturebydate.Response
 import com.example.footyscores.domain.repository.FixturesRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
@@ -20,18 +21,19 @@ class FixturesRepoImpl @Inject constructor(
 ) : FixturesRepo {
 
     private val dao = footyDatabase.dao
-    override suspend fun getFixturesByDate(
+    override fun getFixturesByDate(
         date: String,
         fetchFromNetwork: Boolean
     ): Flow<Resource<List<Response>>> = flow {
         emit(Resource.Loading())
-        dao.getFixturesByDate(date).collect { localFixtures ->
+        dao.getFixturesByDate(date).distinctUntilChanged().collect { localFixtures ->
             emit(Resource.Success(localFixtures.map {
                 it.toDomainModel()
             }))
             val isDatabaseEmpty = localFixtures.isNullOrEmpty()
             val loadCacheOnly = !isDatabaseEmpty && !fetchFromNetwork
             if (loadCacheOnly) {
+                emit(Resource.Loading(false))
                 return@collect
             }
             val remoteFixturesEntityModel = try {
@@ -42,17 +44,14 @@ class FixturesRepoImpl @Inject constructor(
                 emit(Resource.Error("Couldn't load fixtures"))
                 null
             } catch (e: HttpException) {
-                emit(Resource.Error("Couldn't load data"))
+                emit(Resource.Error("Couldn't load fixtures"))
                 null
             }
-
+            emit(Resource.Loading(false))
             remoteFixturesEntityModel?.let { remoteFixtures ->
                 if (isDatabaseEmpty) dao.insertFixtures(remoteFixtures) else dao.updateFixtures(
                     remoteFixtures.map { it.toResponseEntityUpdateModel() }
                 )
-//                val remoteFixtureDomainModel =
-//                    dao.getFixturesByDate(date).map { it.toDomainModel() }
-//                emit(Resource.Success(remoteFixtureDomainModel))
             }
         }
     }
@@ -71,5 +70,11 @@ class FixturesRepoImpl @Inject constructor(
 
     override suspend fun updateFixtureFavoriteStatus(fixtureId: Int, favoriteStatus: Boolean) {
         dao.updateFixtureFavoriteStatus(fixtureId, favoriteStatus)
+    }
+
+    override fun getFavoriteFixture(): Flow<Resource<List<Response>>> = flow {
+        dao.getFavoriteFixtures(true).collect { favoriteFixtures ->
+            emit(Resource.Success(favoriteFixtures.map { it.toDomainModel() }))
+        }
     }
 }

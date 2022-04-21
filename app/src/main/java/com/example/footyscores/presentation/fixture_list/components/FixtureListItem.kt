@@ -41,9 +41,9 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
 
 @Composable
-fun FixtureListItem(matchInfo: Response, onClick: () -> Unit, onEvent: (FixtureListEvent) -> Unit) {
+fun FixtureListItem(matchInfo: Response, onClick: () -> Unit, onEvent: (FixtureListEvent) -> Unit, modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp, end = 8.dp, start = 8.dp)
             .background(LightGreyColor, RoundedCornerShape(8.dp))

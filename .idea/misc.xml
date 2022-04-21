@@ -37,11 +37,15 @@
         <entry key="../../../../layout/compose-model-1650149517664.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_default_sport_icon.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_football_filled.xml" value="0.1215" />
+        <entry key="app/src/main/res/drawable/ic_footy_splash_icon.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_new_footy_score_icon.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/ic_outline_calendar_month_24.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/ic_outline_info_24.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/ic_refresh.xml" value="0.1215" />
+        <entry key="app/src/main/res/drawable/ic_splash_icon_background.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/ic_stadium.xml" value="0.1215" />
         <entry key="app/src/main/res/drawable/ic_whistle.xml" value="0.1215" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_splash_icon.xml" value="0.1215" />
       </map>
     </option>
   </component>
