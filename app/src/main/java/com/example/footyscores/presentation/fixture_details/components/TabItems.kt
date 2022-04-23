@@ -2,7 +2,6 @@ package com.example.footyscores.presentation.fixture_details.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -13,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,8 +31,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun TabItems(
     state: FixtureDetailsState,
-    lazyListState: LazyListState,
-    nestedScrollConnection: NestedScrollConnection
 ) {
     val tabs = remember {
         mutableStateListOf(R.string.info, R.string.summary, R.string.stats, R.string.lineups)
@@ -83,10 +79,10 @@ fun TabItems(
 
         HorizontalPager(count = tabs.size, state = pagerState, modifier = Modifier.weight(1f)) {
             when (this.currentPage) {
-                0 -> InfoScreen(state, nestedScrollConnection)
-                1 -> SummaryScreen(state, nestedScrollConnection)
-                2 -> StatsScreen(state, nestedScrollConnection)
-                3 -> LineupsScreen(state, nestedScrollConnection)
+                0 -> InfoScreen(state)
+                1 -> SummaryScreen(state)
+                2 -> StatsScreen(state)
+                3 -> LineupsScreen(state)
             }
         }
     }

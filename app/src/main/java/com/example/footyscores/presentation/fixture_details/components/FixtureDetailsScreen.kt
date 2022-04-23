@@ -40,6 +40,7 @@ import com.example.footyscores.common.Constants
 import com.example.footyscores.common.getTimeFromDateString
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsEvent
 import com.example.footyscores.presentation.fixture_details.FixtureDetailsState
+import com.example.footyscores.presentation.ui.theme.Black
 import com.example.footyscores.presentation.ui.theme.LatoFont
 import com.example.footyscores.presentation.ui.theme.Orange
 import com.google.accompanist.coil.rememberCoilPainter
@@ -91,7 +92,7 @@ fun FixtureDetailsScreen(
     }
     Column(
         modifier = Modifier
-            .background(Color.Black)
+            .background(Black)
             .padding(8.dp)
             .fillMaxSize()
     ) {
@@ -159,7 +160,7 @@ fun FixtureDetailsScreen(
                             modifier = Modifier
                                 .fillParentMaxSize()
                         ) {
-                            TabItems(state, lazyListState, nestedScrollConnection)
+                            TabItems(state)
                         }
                     }
                 }

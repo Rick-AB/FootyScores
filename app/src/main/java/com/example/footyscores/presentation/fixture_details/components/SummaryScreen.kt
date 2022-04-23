@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +38,6 @@ import java.util.*
 @Composable
 fun SummaryScreen(
     state: FixtureDetailsState,
-    nestedScrollConnection: NestedScrollConnection
 ) {
     Column(
         modifier = Modifier
@@ -79,7 +77,6 @@ fun SummaryScreen(
                     homeTeamId,
                     awayTeamId,
                     homeGoals[index + 1],
-                    awayGoals[index + 1],
                     it
                 )
                 Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
@@ -92,7 +89,6 @@ fun SummaryScreen(
 @Composable
 fun MatchEventItem(
     homeTeamId: Int,
-    awayTeamId: Int,
     homeGoal: Int,
     awayGoal: Int,
     event: FixtureByIdEvent
@@ -152,7 +148,7 @@ fun MatchEventItem(
                     bottom.linkTo(eventTimeText.bottom)
                     end.linkTo(guideline.start, margin = 12.dp)
                 }, event.detail)
-                GOAL_EVENT -> GoalComposeable(Modifier.constrainAs(homeIconView) {
+                GOAL_EVENT -> GoalComposable(Modifier.constrainAs(homeIconView) {
                     top.linkTo(eventTimeText.top)
                     bottom.linkTo(eventTimeText.bottom)
                     end.linkTo(goalsText.start, margin = 12.dp)
@@ -199,7 +195,7 @@ fun MatchEventItem(
                     bottom.linkTo(eventTimeText.bottom)
                     start.linkTo(guideline.end, margin = 12.dp)
                 }, event.detail)
-                GOAL_EVENT -> GoalComposeable(Modifier.constrainAs(awayIconView) {
+                GOAL_EVENT -> GoalComposable(Modifier.constrainAs(awayIconView) {
                     top.linkTo(eventTimeText.top)
                     bottom.linkTo(eventTimeText.bottom)
                     start.linkTo(goalsText.end, margin = 12.dp)
@@ -244,7 +240,7 @@ fun MatchEventItem(
 }
 
 @Composable
-fun GoalComposeable(
+fun GoalComposable(
     modifier: Modifier,
     detail: String?
 ) {

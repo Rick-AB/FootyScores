@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,7 +41,6 @@ import java.util.*
 @Composable
 fun InfoScreen(
     state: FixtureDetailsState,
-    nestedScrollConnection: NestedScrollConnection
 ) {
     val expandedTable = remember {
         mutableStateOf(false)

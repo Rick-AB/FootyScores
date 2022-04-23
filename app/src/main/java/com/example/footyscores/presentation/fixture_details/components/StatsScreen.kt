@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +29,6 @@ import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 @Composable
 fun StatsScreen(
     state: FixtureDetailsState,
-    nestedScrollConnection: NestedScrollConnection
 ) {
     Column(
         modifier = Modifier
@@ -95,6 +93,7 @@ fun StatItem(homeStat: Int, awayStat: Int, statType: String) {
             .fillMaxWidth()
     ) {
         val homeStatGreater = homeStat > awayStat
+        val awayStatGreater = awayStat > homeStat
         val homeProgress = homeStat.toFloat() / (homeStat.toFloat() + awayStat.toFloat())
         val awayProgress = awayStat.toFloat() / (homeStat.toFloat() + awayStat.toFloat())
         Row(
@@ -138,9 +137,19 @@ fun StatItem(homeStat: Int, awayStat: Int, statType: String) {
                 .padding(bottom = 4.dp)
                 .fillMaxWidth()
         ) {
+            val homeProgressBarColor = when {
+                homeStatGreater -> Orange
+                awayStatGreater -> Color.LightGray
+                else -> Color.LightGray
+            }
+            val awayProgressBarColor = when {
+                awayStatGreater -> Orange
+                homeStatGreater -> Color.LightGray
+                else -> Color.LightGray
+            }
             LinearProgressIndicator(
                 progress = (homeProgress),
-                color = if (homeStatGreater) Orange else Color.LightGray,
+                color = homeProgressBarColor,
                 backgroundColor = LightGreyColor,
                 modifier = Modifier
                     .scale(-1f)
@@ -153,7 +162,7 @@ fun StatItem(homeStat: Int, awayStat: Int, statType: String) {
             Spacer(modifier = Modifier.width(5.dp))
             LinearProgressIndicator(
                 progress = awayProgress,
-                color = if (!homeStatGreater) Orange else Color.LightGray,
+                color = awayProgressBarColor,
                 backgroundColor = LightGreyColor,
                 modifier = Modifier
                     .weight(1f)

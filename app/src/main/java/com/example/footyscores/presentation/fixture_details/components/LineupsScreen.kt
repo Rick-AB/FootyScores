@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +27,6 @@ import com.example.footyscores.presentation.ui.theme.WhiteAlphaColor
 @Composable
 fun LineupsScreen(
     state: FixtureDetailsState,
-    nestedScrollConnection: NestedScrollConnection
 ) {
     Column(
         modifier = Modifier
