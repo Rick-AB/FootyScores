@@ -75,8 +75,8 @@ fun SummaryScreen(
                 }
                 MatchEventItem(
                     homeTeamId,
-                    awayTeamId,
                     homeGoals[index + 1],
+                    awayGoals[index + 1],
                     it
                 )
                 Divider(color = WhiteAlphaColor, thickness = 0.4.dp)
