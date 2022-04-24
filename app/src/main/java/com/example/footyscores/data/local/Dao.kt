@@ -1,19 +1,17 @@
 package com.example.footyscores.data.local
 
+import androidx.room.*
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
 import com.example.footyscores.data.local.entities.ResponseEntity
 import com.example.footyscores.data.local.entities.ResponseEntityUpdate
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface Dao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFixtures(fixtures: List<ResponseEntity>)
 
-    @Update(entity = ResponseEntity::class)
+    @Update(entity = ResponseEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateFixtures(fixtures: List<ResponseEntityUpdate>)
 
     @Query("UPDATE ResponseEntity SET isFavorite = :favoriteStatus WHERE fixture_id = :fixtureId")

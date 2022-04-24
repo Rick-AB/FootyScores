@@ -41,7 +41,12 @@ import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.imageloading.ImageLoadState
 
 @Composable
-fun FixtureListItem(matchInfo: Response, onClick: () -> Unit, onEvent: (FixtureListEvent) -> Unit, modifier: Modifier = Modifier) {
+fun FixtureListItem(
+    matchInfo: Response,
+    onClick: () -> Unit,
+    onEvent: (FixtureListEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -82,9 +87,9 @@ fun FixtureListItem(matchInfo: Response, onClick: () -> Unit, onEvent: (FixtureL
         if (matchOngoing) {
             Box(
                 modifier = Modifier
-                    .width(5.dp)
+                    .width(4.5.dp)
                     .height(50.dp)
-                    .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
+                    .clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
                     .background(Orange)
             )
             Spacer(modifier = Modifier.width(15.dp))

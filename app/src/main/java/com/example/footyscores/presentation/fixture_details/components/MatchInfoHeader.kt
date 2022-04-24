@@ -181,14 +181,14 @@ fun MatchInfoHeader(
             matchStatusShort == Constants.LIVE || matchStatusShort == HALF_TIME || matchStatusShort == Constants.FIRST_HALF || matchStatusShort == Constants.SECOND_HALF || matchStatusShort == Constants.EXTRA_TIME
         if (matchOngoing) {
             Box(modifier = Modifier
-                .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
+                .clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
                 .background(Orange)
                 .constrainAs(onGoingIndicator) {
                     top.linkTo(homeTeamImage.top)
                     bottom.linkTo(homeTeamText.bottom)
                     start.linkTo(parent.start)
                     height = Dimension.fillToConstraints
-                    width = Dimension.value(6.dp)
+                    width = Dimension.value(5.5.dp)
                 })
         }
     }
